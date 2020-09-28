@@ -8,41 +8,23 @@ class Item(models.Model):
 
 class Menu(models.Model):
     name = models.CharField(max_length=64)
-
     items = models.ManyToManyField(Item)
-
-    start_time = models.TimeField(blank=True)
-    end_time = models.TimeField(blank=True)
-    reoccurs = models.CharField(max_length=2, choices=[
-            ("DY", "daily"),
-            ("WK", "weekly")
-        ]
-    )
-
-    def check_available(self, time=None):
-        import datetime
-
-        if time is None:
-            time = timezone.now()
-
-        if self.reoccurs == "DY":
-            today_start = self.start_time.replace(year=time.year, month=time.month, day=time.day)
-            today_end = self.end_time.replace(year=time.year, month=time.month, day=time.day)
-            result = today_start < time < today_end
-
-        elif self.reoccurs == "WK":
-            week_start = self.start_time.weekday()
-            week_end = self.end_time.weekday()
-            week_now = time.weekday()
-            result = week_start <= week_end <= week_now
-
-        else:
-            result = True
-
-        return result
 
     def __str__(self):
         return self.name
+
+class DailyMenu(Menu):
+    start_time = models.TimeField(blank=True)
+    end_time = models.TimeField(blank=True)
+
+    def check_available(self, time=None):
+        import datetime
+        if time is None:
+            time = timezone.now().time()
+        elif isinstance(time, datetime.datetime):
+            time = time.time()
+
+        return self.start_time <= time <= self.end_time
 
 class Table(models.Model):
     table_number = models.IntegerField(primary_key=True)

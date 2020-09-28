@@ -6,7 +6,7 @@
     <RootNamespace>ramsay</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|django</InterpreterId>
     <TestFramework>pytest</TestFramework>
-    <UnitTestPattern>tests.py</UnitTestPattern>
+    <UnitTestPattern>test_*.py, tests.py</UnitTestPattern>
     <UnitTestRootDirectory>./</UnitTestRootDirectory>
   </PropertyGroup>
   <PropertyGroup>
@@ -38,10 +38,15 @@
     <Compile Include="backend\apps.py" />
     <Compile Include="backend\migrations\__init__.py" />
     <Compile Include="backend\models.py" />
-    <Compile Include="backend\tests.py" />
+    <Compile Include="backend\tests\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="backend\views.py" />
     <Compile Include="backend\__init__.py" />
     <Compile Include="manage.py" />
+    <Compile Include="backend\tests\test_daily_menu_model.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ramsay\__init__.py" />
     <Compile Include="ramsay\settings.py" />
     <Compile Include="ramsay\urls.py" />
@@ -50,6 +55,7 @@
   <ItemGroup>
     <Folder Include="backend\" />
     <Folder Include="backend\migrations\" />
+    <Folder Include="backend\tests\" />
     <Folder Include="backend\templates\" />
     <Folder Include="backend\templates\backend\" />
     <Folder Include="ramsay\" />
