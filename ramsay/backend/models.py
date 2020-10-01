@@ -1,14 +1,20 @@
+import uuid
 from django.db import models
 from django.utils import timezone
+
+class Image(models.Model):
+    
+    def get_upload_name(self, instace, filename):
+        return "images/{}.{}".format(instance.id,filename.split('.')[-1])
+
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    image = models.ImageField(upload_to=get_upload_name)    
 
 class Item(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=256)
     price = models.FloatField()
-    image = models.CharField(max_length=128, blank=True, null=True)
-
-    def has_image(self):
-        return self.image is not None
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -52,8 +58,8 @@ class WeeklyMenu(Menu):
     start_time = models.TimeField(null=True, blank=True)
     end_time = models.TimeField(null=True, blank=True)
 
-    start_day = models.IntegerField()
-    end_day = models.IntegerField()
+    start_day = models.IntegerField(choices=day_choices)
+    end_day = models.IntegerField(choices=day_choices)
 
     def check_available(self, time=None):
         import datetime

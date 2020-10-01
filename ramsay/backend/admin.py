@@ -36,6 +36,7 @@ class DailyMenuAdmin(admin.ModelAdmin):
 
 @admin.register(WeeklyMenu)
 class WeeklyMenuAdmin(admin.ModelAdmin):
+    #TODO: Make start and end day dropdowns instead of integers.
     pass
 
 

@@ -38,7 +38,13 @@
     <Compile Include="backend\apps.py" />
     <Compile Include="backend\migrations\__init__.py" />
     <Compile Include="backend\models.py" />
+    <Compile Include="backend\serializers.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="backend\tests\test_menu_model.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="backend\urls.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="backend\tests\__init__.py">

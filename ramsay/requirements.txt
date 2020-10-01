@@ -1,1 +1,5 @@
 django >= 2.2.13, < 3.0
+djangorestframework
+markdown
+django-filter
+pillow

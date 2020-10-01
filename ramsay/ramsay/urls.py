@@ -1,11 +1,8 @@
-"""
-Definition of urls for ramsay.
-"""
-
 from datetime import datetime
-from django.urls import path
+from django.urls import path, include
 from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('backend.urls'))
 ]
