@@ -6,7 +6,6 @@ class ItemSerializer(serializers.Serializer):
     description = serializers.CharField(max_length=256)
     price = serializers.FloatField()
     image = serializers.CharField(max_length=256)
-    has_image = serializers.BooleanField()
 
     def create(self, validated_data):
         return Snippet.objects.create(**validated_data)

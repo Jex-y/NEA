@@ -14,8 +14,8 @@ class Item(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=256)
     price = models.FloatField()
-    image = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
-
+    image = models.OneToOneField(Image, on_delete=models.CASCADE, blank=True, null=True)
+    
     def __str__(self):
         return self.name
 

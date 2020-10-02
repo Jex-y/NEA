@@ -2,9 +2,12 @@ from django.contrib import admin
 from .models import *
 
 
+class ImageAdmin(admin.StackedInline):
+    model = Image
+
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    pass
+    inlines = [ImageAdmin]
 
 
 @admin.register(Menu)
@@ -36,7 +39,6 @@ class DailyMenuAdmin(admin.ModelAdmin):
 
 @admin.register(WeeklyMenu)
 class WeeklyMenuAdmin(admin.ModelAdmin):
-    #TODO: Make start and end day dropdowns instead of integers.
     pass
 
 

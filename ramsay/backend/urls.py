@@ -7,5 +7,5 @@ from .views import *
 urlpatterns = [
     path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('menus/<str:menu>', ItemMenuList.as_view),
-    path('items/<int:pk>/', ItemDetail.as_view),
+    path('items/<int:pk>/', ItemDetail.as_view()),
 ] + static('media/', document_root=settings.MEDIA_ROOT)

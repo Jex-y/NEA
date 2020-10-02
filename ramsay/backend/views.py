@@ -1,11 +1,12 @@
 from django.http import Http404
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 from . import models
-from .serializers import *
-
+from . import serializers
 
 class ItemDetail(APIView):
-    
+
     def get_object(self, pk):
         try:
             return models.Item.objects.get(pk=pk)
@@ -14,8 +15,8 @@ class ItemDetail(APIView):
 
     def get(self, request, pk, format=None):
         item = self.get_object(pk)
-
-        # Serialise single item
+        serializer = serializers.ItemSerializer(item)
+        return Response(serializer.data)
 
 
 class ItemMenuList(APIView):
