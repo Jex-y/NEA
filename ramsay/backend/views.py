@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from . import models
 from . import serializers
 
-class ItemDetail(APIView):
+class ItemDetailView(APIView):
 
     def get_object(self, pk):
         try:
@@ -19,15 +19,34 @@ class ItemDetail(APIView):
         return Response(serializer.data)
 
 
-class ItemMenuList(APIView):
+class ItemMenuListView(APIView):
 
-    def get_objects(self, menu):
+    def get_objects(self, url_name):
         try:
-            return models.Item.objects.get(menu=menu)
+            menus = models.Menu.objects.filter(url_name=url_name)
+            item_queryset = models.Item.objects.none()
+            for menu in menus:
+                item_queryset = item_queryset.union(menu.items.all())
+            return item_queryset
         except:
             raise Http404
 
-    def get(self, request, menu, format=None):
-        items = self.get_objects(menu)
+    def get(self, request, url_name, format=None):
+        items = self.get_objects(url_name)
+        serializer = serializers.ItemSerializer(items, many=True)
+        return Response(serializer.data)
 
-        # Serialise items and return
+
+class MenuListView(APIView):
+
+    def get_objects(self):
+        try:
+            return models.Menu.objects.all()
+        except:
+            raise Http404
+
+    def get(self, request, format=None):
+        items = self.get_objects()
+        serializer = serializers.MenuSerializer(items, many=True)
+        return Response(serializer.data)
+

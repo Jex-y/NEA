@@ -2,38 +2,21 @@ from django.contrib import admin
 from .models import *
 
 
-class ImageAdmin(admin.StackedInline):
+class ImageInLine(admin.StackedInline):
     model = Image
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    inlines = [ImageAdmin]
-
+   inlines = [ImageInLine]
+   pass
 
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
     pass
 
-
 @admin.register(DailyMenu)
 class DailyMenuAdmin(admin.ModelAdmin):
-    #fieldsets = [
-    #    (None, {
-    #        "fields": [
-    #            "name",
-    #            "items"
-    #            ]
-    #        }
-    #    ),
-    #    ("Availability", {
-    #        "fields": [
-    #            "check_available", 
-    #            "start_time", 
-    #            "end_time"
-    #            ]
-    #        }
-    #     ),
-    #]
+
     def currently_available(self, obj):
         return obj.check_available()
 

@@ -63,6 +63,7 @@ REST_FRAMEWORK = {
 # Media settings
 # Path where media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URI = 'media/'
 
 
 ROOT_URLCONF = 'ramsay.urls'

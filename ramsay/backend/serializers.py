@@ -10,12 +10,16 @@ class ItemSerializer(serializers.Serializer):
     def create(self, validated_data):
         return Snippet.objects.create(**validated_data)
 
-    def get_image(self, obj):
-        return obj.image.url
-
     def update():
         pass
 
-    #TODO: Make serialiser for Item so that the image path is correct.
+class MenuSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=64)
+    url_name = serializers.CharField(max_length=64)
 
+    def create(self, validated_data):
+        return Snippet.objects.create(**validated_data)
+
+    def update():
+        pass
 

@@ -36,7 +36,6 @@
   <ItemGroup>
     <Compile Include="backend\admin.py" />
     <Compile Include="backend\apps.py" />
-    <Compile Include="backend\migrations\__init__.py" />
     <Compile Include="backend\models.py" />
     <Compile Include="backend\serializers.py">
       <SubType>Code</SubType>
@@ -70,7 +69,6 @@
     <Content Include="backend\templates\backend\index.html" />
     <Content Include="pytest.ini" />
     <Content Include="requirements.txt" />
-    <Content Include="db.sqlite3" />
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.html">
