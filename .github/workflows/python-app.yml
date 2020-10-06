@@ -11,6 +11,8 @@ on:
 
 jobs:
   build:
+    env:
+      working-directory: ./ramsay
 
     runs-on: ubuntu-latest
 
@@ -33,4 +35,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with django 
       run: |
-        python ramsay/manage.py test
+        python rmanage.py test
