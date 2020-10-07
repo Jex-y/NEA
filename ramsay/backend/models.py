@@ -29,6 +29,7 @@ class Image(models.Model):
 class Menu(models.Model):
     name = models.CharField(max_length=64)
     items = models.ManyToManyField(Item)
+    super_menu = models.ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True)
     available = models.BooleanField(default=True)
     url_name = models.SlugField(max_length=64, editable=False)
 

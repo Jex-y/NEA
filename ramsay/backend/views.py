@@ -23,10 +23,12 @@ class ItemMenuListView(APIView):
 
     def get_objects(self, url_name):
         try:
-            menus = models.Menu.objects.filter(url_name=url_name)
+            menus = models.Menu.objects.filter(url_name=url_name, super_menu=None)
             item_queryset = models.Item.objects.none()
             for menu in menus:
-                item_queryset = item_queryset.union(menu.items.all())
+                # Test with times 
+                if menu.check_available():
+                    item_queryset = item_queryset.union(menu.items.all())
             return item_queryset
         except:
             raise Http404
