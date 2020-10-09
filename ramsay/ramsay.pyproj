@@ -36,8 +36,14 @@
   <ItemGroup>
     <Compile Include="backend\admin.py" />
     <Compile Include="backend\apps.py" />
+    <Compile Include="backend\managers.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="backend\models.py" />
     <Compile Include="backend\serializers.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="backend\tests\test_item_model.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="backend\tests\test_menu_model.py">

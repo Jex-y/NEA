@@ -3,7 +3,7 @@ import datetime
 import django
 from django.test import TestCase
 from django.utils import timezone
-from backend.models import Menu, DailyMenu, WeeklyMenu
+from backend.models import Menu
 
 class MenuModelTests(TestCase):
 
@@ -28,14 +28,14 @@ class DailyMenuModelTests(TestCase):
     def setUp(self):
         start_time = datetime.datetime.fromisoformat("2020-01-01T08:00:00")
         end_time = datetime.datetime.fromisoformat("2020-01-01T16:00:00")
-        DailyMenu.objects.create(name="Test Menu", start_time=start_time, end_time=end_time)
+        Menu.objects.create(name="Test Menu", start_time=start_time, end_time=end_time)
 
     def test_menu_check_availability_correct_daily_time(self):
         """
         Menu.check_availability(time) should return True if the time given is in the correct specifed range.
         The bounds should be inclusive.
         """
-        menu = DailyMenu.objects.get(name="Test Menu")
+        menu = Menu.objects.get(name="Test Menu")
 
         # Normal value
         test_time =  datetime.datetime.fromisoformat("2020-01-01T14:00:00")
@@ -53,7 +53,7 @@ class DailyMenuModelTests(TestCase):
         """
         Menu.check_availability(time) should return False is the given time is before the daily start or after the daily end. 
         """
-        menu = DailyMenu.objects.get(name="Test Menu")
+        menu = Menu.objects.get(name="Test Menu")
 
         ## Before
 
@@ -80,13 +80,13 @@ class WeeklyMenuModelTestsNoTime(TestCase):
     def setUp(self):
         start_day = 0 # Monday
         end_day = 4 # Friday
-        WeeklyMenu.objects.create(name="Test Menu", start_day=start_day, end_day=end_day)
+        Menu.objects.create(name="Test Menu", start_day=start_day, end_day=end_day)
 
     def test_menu_check_availability_day_correct(self):
         """
-        WeeklyMenu.check_availability(time) should return True if the weekday is correct, no matter the time.
+        Menu.check_availability(time) should return True if the weekday is correct, no matter the time.
         """
-        menu = WeeklyMenu.objects.get(name="Test Menu")
+        menu = Menu.objects.get(name="Test Menu")
 
         # Normal value
         test_time =  datetime.datetime.fromisoformat("2020-01-01T12:00:00") # Wednesday, weekday no 2
@@ -110,9 +110,9 @@ class WeeklyMenuModelTestsNoTime(TestCase):
 
     def test_menu_check_availability_day_incorrect(self):
         """
-        WeeklyMenu.check_availability(time) should return False if the weekday is incorrect.
+        Menu.check_availability(time) should return False if the weekday is incorrect.
         """
-        menu = WeeklyMenu.objects.get(name="Test Menu")
+        menu = Menu.objects.get(name="Test Menu")
 
         # Extreme lower bound
         test_time =  datetime.datetime.fromisoformat("2020-01-04T00:00:00") # Saturday, weekday no 5
@@ -129,14 +129,14 @@ class WeeklyMenuModelTestsWithTime(TestCase):
         end_day = 4 # Friday
         start_time = datetime.datetime.fromisoformat("2020-01-01T08:00:00")
         end_time = datetime.datetime.fromisoformat("2020-01-01T16:00:00")
-        WeeklyMenu.objects.create(name="Test Menu", start_day=start_day, end_day=end_day, start_time=start_time, end_time=end_time)
+        Menu.objects.create(name="Test Menu", start_day=start_day, end_day=end_day, start_time=start_time, end_time=end_time)
 
     def test_menu_check_availability_correct_daily_time(self):
         """
         Menu.check_availability(time) should return True if the time given is in the correct specifed range.
         The bounds should be inclusive.
         """
-        menu = WeeklyMenu.objects.get(name="Test Menu")
+        menu = Menu.objects.get(name="Test Menu")
 
         # Normal value
         test_time =  datetime.datetime.fromisoformat("2020-01-01T14:00:00") # Wednesday, weekday no 2
@@ -154,7 +154,7 @@ class WeeklyMenuModelTestsWithTime(TestCase):
         """
         Menu.check_availability(time) should return False is the given time is before the daily start or after the daily end. 
         """
-        menu = WeeklyMenu.objects.get(name="Test Menu")
+        menu = Menu.objects.get(name="Test Menu")
 
         ## Before
 
@@ -175,3 +175,44 @@ class WeeklyMenuModelTestsWithTime(TestCase):
         # Extreme value
         test_time =  datetime.datetime.fromisoformat("2020-01-01T16:00:01") # Wednesday, weekday no 2
         self.assertIs(menu.check_available(test_time), False)
+
+class MenuQueryTests(TestCase):
+    def setUp(self):
+        self.normal_menu1 = Menu.objects.create(name="Normal Menu 1")
+        self.normal_menu2 = Menu.objects.create(name="Normal Menu 2", available=False)
+
+        start_day = 0 # Monday
+        end_day = 4 # Friday
+        start_time = datetime.datetime.fromisoformat("2020-01-01T08:00:00")
+        end_time = datetime.datetime.fromisoformat("2020-01-01T16:00:00")
+
+        self.weekly_menu1 = Menu.objects.create(name="Weekly Menu 1", start_day=start_day, end_day=end_day, start_time=start_time, end_time=end_time)
+
+        start_day = 5 # Saturday
+        end_day = 6 # Sunday
+
+        self.weekly_menu2 = Menu.objects.create(name="Weekly Menu 2", start_day=start_day, end_day=end_day, start_time=start_time, end_time=end_time)
+
+        self.daily_menu1 = Menu.objects.create(name="Daily Menu 1", start_time=start_time, end_time=end_time)
+
+        start_time = datetime.datetime.fromisoformat("2020-01-01T16:00:00")
+        end_time = datetime.datetime.fromisoformat("2020-01-01T20:00:00")
+
+        self.daily_menu2 = Menu.objects.create(name="Daily Menu 2", start_time=start_time, end_time=end_time)
+
+    def test_normal_available(self):
+        test_time = datetime.datetime.fromisoformat("2020-01-01T12:00:00")
+        queryset = Menu.objects.available(test_time)
+        pks = [menu.pk for menu in queryset]
+        
+        self.assertEqual(self.normal_menu1.pk in pks, True)
+        self.assertEqual(self.normal_menu2.pk in pks, False)
+
+    def test_weekly_available(self):
+        test_time = datetime.datetime.fromisoformat("2020-01-01T12:00:00") # Wednesday, weekday no 2
+        queryset = Menu.objects.available(test_time)
+        pks = [menu.pk for menu in queryset]
+        
+        self.assertEqual(self.weekly_menu1.pk in pks, True)
+        self.assertEqual(self.weekly_menu2.pk in pks, False)
+
