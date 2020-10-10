@@ -31,7 +31,7 @@ class Item(models.Model):
     price = models.FloatField()
     available = models.BooleanField(default=True)
     image = models.ForeignKey(Image, on_delete=models.PROTECT, blank=True, null=True)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
     
     def __str__(self):
         return self.name

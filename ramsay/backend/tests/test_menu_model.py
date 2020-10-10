@@ -216,3 +216,11 @@ class MenuQueryTests(TestCase):
         self.assertEqual(self.weekly_menu1.pk in pks, True)
         self.assertEqual(self.weekly_menu2.pk in pks, False)
 
+    def test_daily_available(self):
+        test_time = datetime.datetime.fromisoformat("2020-01-01T12:00:00")
+        queryset = Menu.objects.available(test_time)
+        pks = [menu.pk for menu in queryset]
+
+        self.assertEqual(self.daily_menu1.pk in pks, True)
+        self.assertEqual(self.daily_menu2.pk in pks, False)
+

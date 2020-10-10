@@ -49,6 +49,9 @@
     <Compile Include="backend\tests\test_menu_model.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="backend\tests\test_views.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="backend\urls.py">
       <SubType>Code</SubType>
     </Compile>

@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -18,6 +19,21 @@ class ItemDetailView(APIView):
         serializer = serializers.ItemSerializer(item)
         return Response(serializer.data)
 
+class ItemSearchView(APIView):
+
+    def get_objects(self, query):
+        try:
+            return models.Item.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
+        except:
+            raise Http404
+
+    def get(self, request, query, format=None):
+        items = self.get_objects(query)
+        serializer = serializers.ItemSerializer(items, many=True)
+        return Response(serializer.data)
+
+
+
 
 class ItemMenuListView(APIView):
 
@@ -26,7 +42,6 @@ class ItemMenuListView(APIView):
             menus = models.Menu.objects.filter(url_name=url_name, super_menu=None)
             item_queryset = models.Item.objects.none()
             for menu in menus:
-                # Test with times 
                 if menu.check_available():
                     item_queryset = item_queryset.union(menu.items.all())
             return item_queryset
