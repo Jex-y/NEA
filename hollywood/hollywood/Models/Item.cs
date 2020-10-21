@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Xamarin.Forms;
 
 namespace hollywood.Models
 {
-    public class Item
+    class Item
     {
-        public string Id { get; set; }
-        public string Text { get; set; }
-        public string Description { get; set; }
+        Guid ID { get; }
+        string Name { get; }
+        string Description { get; }
+        decimal Price { get; }
+        List<Tag> Tags { get; }
+        Uri Image { get; }
     }
 }

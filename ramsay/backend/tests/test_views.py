@@ -19,9 +19,11 @@ class ItemSearchViewTest(TestCase):
 
     def test_full_name_search(self):
         expected = [{
+            'id': str(self.apple.id),
             'name': 'Apple', 
             'description': 'Some text', 
-            'price': 12.34, 
+            'price': '12.34', 
+            'tags': [],
             'image': None
             }]
 
@@ -32,9 +34,11 @@ class ItemSearchViewTest(TestCase):
 
     def test_partial_name_search(self):
         expected = [{
+            'id': str(self.apple.id),
             'name': 'Apple', 
             'description': 'Some text', 
-            'price': 12.34, 
+            'price': '12.34', 
+            'tags': [],
             'image': None
             }]
 
@@ -45,9 +49,11 @@ class ItemSearchViewTest(TestCase):
 
     def test_full_description_search(self):
         expected = [{
+            'id': str(self.bannana.id),
             'name': 'A name', 
             'description': 'This is a bannana', 
-            'price': 12.34, 
+            'price': '12.34',
+            'tags': [],
             'image': None
             }]
 
@@ -58,9 +64,11 @@ class ItemSearchViewTest(TestCase):
 
     def test_partial_description_search(self):
         expected = [{
+            'id': str(self.bannana.id),
             'name': 'A name', 
             'description': 'This is a bannana', 
-            'price': 12.34, 
+            'price': '12.34',
+            'tags': [],
             'image': None
             }]
 

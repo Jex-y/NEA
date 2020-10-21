@@ -8,15 +8,15 @@ from . import serializers
 
 class ItemDetailView(APIView):
 
-    def get_object(self, pk):
+    def get_object(self, id):
         try:
-            return models.Item.objects.get(pk=pk)
+            return models.Item.objects.get(id=id)
         except:
             raise Http404
 
-    def get(self, request, pk, format=None):
-        item = self.get_object(pk)
-        serializer = serializers.ItemSerializer(item)
+    def get(self, request, id, format=None):
+        item = self.get_object(id)
+        serializer = serializers.ItemSerializer(item, context={'request': request})
         return Response(serializer.data)
 
 class ItemSearchView(APIView):
@@ -29,11 +29,8 @@ class ItemSearchView(APIView):
 
     def get(self, request, query, format=None):
         items = self.get_objects(query)
-        serializer = serializers.ItemSerializer(items, many=True)
+        serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
         return Response(serializer.data)
-
-
-
 
 class ItemMenuListView(APIView):
 
@@ -43,14 +40,15 @@ class ItemMenuListView(APIView):
             item_queryset = models.Item.objects.none()
             for menu in menus:
                 if menu.check_available():
-                    item_queryset = item_queryset.union(menu.items.all())
+                    item_queryset = item_queryset.union(menu.items.filter(available=True))
             return item_queryset
-        except:
+        except Exception as e:
             raise Http404
 
     def get(self, request, url_name, format=None):
         items = self.get_objects(url_name)
-        serializer = serializers.ItemSerializer(items, many=True)
+        serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
+        print(serializer.data)
         return Response(serializer.data)
 
 
@@ -64,6 +62,6 @@ class MenuListView(APIView):
 
     def get(self, request, format=None):
         items = self.get_objects()
-        serializer = serializers.MenuSerializer(items, many=True)
+        serializer = serializers.MenuSerializer(items, many=True, context={'request': request})
         return Response(serializer.data)
 

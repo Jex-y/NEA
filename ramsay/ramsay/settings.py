@@ -25,7 +25,7 @@ SECRET_KEY = '51efec6a-ccb4-42ba-9e03-396e918aecb7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application references
 # https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-INSTALLED_APPS
@@ -63,7 +63,7 @@ REST_FRAMEWORK = {
 # Media settings
 # Path where media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URI = 'media/'
+MEDIA_URL = '/media/'
 
 
 ROOT_URLCONF = 'ramsay.urls'
