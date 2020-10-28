@@ -36,27 +36,32 @@ class ItemMenuListView(APIView):
 
     def get_objects(self, url_name):
         try:
-            menus = models.Menu.objects.filter(url_name=url_name, super_menu=None)
+            menus = models.Menu.objects.filter(url_name=url_name)
             item_queryset = models.Item.objects.none()
+            submenu_queryset = models.Menu.objects.none()
             for menu in menus:
                 if menu.check_available():
                     item_queryset = item_queryset.union(menu.items.filter(available=True))
-            return item_queryset
+                    submenu_queryset = submenu_queryset.union(models.Menu.objects.filter(super_menu=menu))
+            return item_queryset, submenu_queryset
         except Exception as e:
             raise Http404
 
     def get(self, request, url_name, format=None):
-        items = self.get_objects(url_name)
-        serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
-        print(serializer.data)
-        return Response(serializer.data)
-
+        items, menus = self.get_objects(url_name)
+        item_serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
+        menu_serializer = serializers.MenuSerializer(menus, many=True, context={'request': request})
+        data = {
+            'items': item_serializer.data,
+            'menus': menu_serializer.data,
+            }
+        return Response(data)
 
 class MenuListView(APIView):
 
     def get_objects(self):
         try:
-            return models.Menu.objects.all()
+            return models.Menu.objects.filter(super_menu=None)
         except:
             raise Http404
 

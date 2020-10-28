@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace hollywood.Models
 {
-    class Item
+    public class Item
     {
         Guid ID { get; }
         string Name { get; }

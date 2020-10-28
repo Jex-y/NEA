@@ -6,7 +6,7 @@ using hollywood.Models;
 
 namespace hollywood.Services
 {
-    interface IRestService
+    public interface IRestService
     {
         Task<List<MenuHandle>> GetMenusAsync ();
 

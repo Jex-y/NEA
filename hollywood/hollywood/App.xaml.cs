@@ -8,12 +8,12 @@ namespace hollywood
 {
     public partial class App : Application
     {
-
+        public static IRestService ApiConnection { get; private set; }
         public App()
         {
             InitializeComponent();
+            ApiConnection = new RestService();
 
-            DependencyService.Register<MockDataStore>();
             MainPage = new AppShell();
         }
 

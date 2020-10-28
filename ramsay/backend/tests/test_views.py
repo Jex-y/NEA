@@ -19,6 +19,7 @@ class ItemSearchViewTest(TestCase):
 
     def test_full_name_search(self):
         expected = [{
+
             'id': str(self.apple.id),
             'name': 'Apple', 
             'description': 'Some text', 

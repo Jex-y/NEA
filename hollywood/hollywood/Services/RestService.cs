@@ -10,16 +10,16 @@ using System.Diagnostics;
 
 namespace hollywood.Services
 {
-    class RestService : IRestService
+    public class RestService : IRestService
     {
-        HttpClient client;
-        RestService() {
+        readonly HttpClient client;
+        public RestService() {
             client = new HttpClient();
         }
 
         public async Task<Menu> GetMenuDetailAsync(MenuHandle handle)
         {
-            Uri uri = new Uri(Constants.RestUrl + "/menus/" + handle.url_name);
+            Uri uri = new Uri(Constants.RestUrl + "menus/" + handle.URLName);
             Menu menu = null;
             try
             {
@@ -33,6 +33,7 @@ namespace hollywood.Services
             catch (Exception ex)
             {
                 Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
             }
 
             return menu;
@@ -40,7 +41,7 @@ namespace hollywood.Services
 
         public async Task<List<MenuHandle>> GetMenusAsync()
         {
-            Uri uri = new Uri(Constants.RestUrl + "/menus/");
+            Uri uri = new Uri(Constants.RestUrl + "menus/");
             List<MenuHandle> menus = new List<MenuHandle>();
             try
             {
@@ -49,11 +50,12 @@ namespace hollywood.Services
                 {
                     string content = await response.Content.ReadAsStringAsync();
                     menus = JsonConvert.DeserializeObject<List<MenuHandle>>(content);
-                }
+                }   
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
             }
 
             return menus;

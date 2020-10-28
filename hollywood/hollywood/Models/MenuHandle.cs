@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace hollywood.Models
 {
-    class MenuHandle
+    public class MenuHandle
     {
-        public string name { get; }
-        public string description { get; }
-        public string url_name { get; }
-        public Uri image_uri { get; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+        [JsonProperty("url_name")]
+        public string URLName { get; set; }
+        [JsonProperty("description")]
+        public string Description { get; set; }
+        [JsonProperty("image")]
+        public Uri ImageURI { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace hollywood.Models
 {
-    class Menu
+    public class Menu
     {
         MenuHandle handle { get; }
         List<MenuHandle> submenus { get; }
