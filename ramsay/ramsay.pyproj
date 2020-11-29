@@ -62,10 +62,24 @@
     <Compile Include="backend\views.py" />
     <Compile Include="backend\__init__.py" />
     <Compile Include="manage.py" />
+    <Compile Include="qrcode\admin.py" />
+    <Compile Include="qrcode\apps.py" />
+    <Compile Include="qrcode\migrations\__init__.py" />
+    <Compile Include="qrcode\models.py" />
+    <Compile Include="qrcode\tests.py" />
+    <Compile Include="qrcode\views.py" />
+    <Compile Include="qrcode\__init__.py" />
     <Compile Include="ramsay\__init__.py" />
     <Compile Include="ramsay\settings.py" />
     <Compile Include="ramsay\urls.py" />
     <Compile Include="ramsay\wsgi.py" />
+    <Compile Include="recipt\admin.py" />
+    <Compile Include="recipt\apps.py" />
+    <Compile Include="recipt\migrations\__init__.py" />
+    <Compile Include="recipt\models.py" />
+    <Compile Include="recipt\tests.py" />
+    <Compile Include="recipt\views.py" />
+    <Compile Include="recipt\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="backend\" />
@@ -73,11 +87,21 @@
     <Folder Include="backend\tests\" />
     <Folder Include="backend\templates\" />
     <Folder Include="backend\templates\backend\" />
+    <Folder Include="qrcode\" />
+    <Folder Include="qrcode\migrations\" />
+    <Folder Include="qrcode\templates\" />
+    <Folder Include="qrcode\templates\qrcode\" />
     <Folder Include="ramsay\" />
+    <Folder Include="recipt\" />
+    <Folder Include="recipt\migrations\" />
+    <Folder Include="recipt\templates\" />
+    <Folder Include="recipt\templates\recipt\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="backend\templates\backend\index.html" />
     <Content Include="pytest.ini" />
+    <Content Include="qrcode\templates\qrcode\index.html" />
+    <Content Include="recipt\templates\recipt\index.html" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>

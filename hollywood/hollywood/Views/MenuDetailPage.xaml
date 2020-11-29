@@ -1,24 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="hollywood.Views.MenuListPage"
+             x:Class="hollywood.Views.MenuDetailPage"
              Title="{Binding Title}">
 
     <StackLayout>
-        <!--<Label Text="{Binding Menus.Count}"
-               TextColor="Black"/>
-
-        <Label Text="{Binding Menus[0]}"
-               TextColor="Black"/>
-
-        <Label Text="{Binding Menus[0].Name}"
-               TextColor="Black"/>-->
         
         <RefreshView 
             Command="{Binding RefreshCommand}"
             IsRefreshing="{Binding IsRefreshing}">
             <CollectionView
-                ItemsSource="{Binding Menus}">
+                ItemsSource="{Binding ViewMenu.SubMenus}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -60,5 +52,50 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
+
+        <CollectionView
+            ItemsSource="{Binding ViewMenu.Items}"
+            ItemsLayout="VerticalGrid, 2">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="64" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="16" />
+                        </Grid.RowDefinitions>
+
+                        <Image 
+                            Source="{Binding ImageURI}"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand" 
+                            Aspect="AspectFill"
+                            Opacity="1"
+                            Grid.Row="0"/>
+
+                        <Label 
+                            Text="{Binding Name}"
+                            FontAttributes="Bold"
+                            FontSize="Large"
+                            TextColor="Black"
+                            Grid.Row="1"/>
+
+                        <Label 
+                            Text="{Binding Description}"
+                            FontSize="Body" 
+                            TextColor="Black"
+                            Grid.Row="2"/>
+
+                        <Label 
+                            Text="{Binding Price, StringFormat='{0:C}'}"
+                            FontSize="Body" 
+                            TextColor="Black"
+                            Grid.Row="3"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
     </StackLayout>
 </ContentPage>

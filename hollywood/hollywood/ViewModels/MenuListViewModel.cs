@@ -1,7 +1,10 @@
 ﻿using hollywood.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Essentials;
@@ -11,37 +14,46 @@ namespace hollywood.ViewModels
 {
     public class MenuListViewModel : BaseViewModel
     {
-        List<MenuHandle> Menus;
-        DateTime MenusAge;
-
         public MenuListViewModel()
         {
+            RefreshMenus();
+            // Menus.Add(new MenuHandle { Name = "Test", Description="test2"});
             Title = "Menu";
         }
 
-        async Task<Boolean> RefreshMenus() {
-            Boolean successful = false;
-            try
-            {
-                Menus = await App.ApiConnection.GetMenusAsync();
-                MenusAge = DateTime.Now;
-                successful = true;
-            }
-            catch 
-            { 
-            }
-
-            return successful;
-        }
-        public async Task<List<MenuHandle>> GetMenus() {
+        public async Task RefreshMenus()
+        {
+            isRefreshing = true;
             TimeSpan age = DateTime.Now - MenusAge;
-
-            if (age.TotalMinutes > 1) {
-                await RefreshMenus();
+            if (age.TotalSeconds > 1)
+            {
+                try
+                {
+                    Menus = await App.ApiConnection.GetMenusAsync();
+                    MenusAge = DateTime.Now;
+                }
+                catch { }
             }
-
-            return Menus;
+            isRefreshing = false;
         }
 
+        ObservableCollection<MenuHandle> menus = new ObservableCollection<MenuHandle>();
+        public ObservableCollection<MenuHandle> Menus
+        {
+            get { return menus; }
+            private set { SetProperty(ref menus, value); }
+        }
+
+        bool isRefreshing;
+
+        public bool IsRefreshing
+        {
+            get { return isRefreshing; }
+            private set { SetProperty(ref isRefreshing, value); }
+        }
+
+        DateTime MenusAge = DateTime.MinValue;
+
+        public ICommand RefreshCommand => new Command(async () => await RefreshMenus());
     }
 }

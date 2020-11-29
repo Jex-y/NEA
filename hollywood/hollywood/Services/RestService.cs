@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 using hollywood.Models;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace hollywood.Services
 {
@@ -17,17 +18,17 @@ namespace hollywood.Services
             client = new HttpClient();
         }
 
-        public async Task<Menu> GetMenuDetailAsync(MenuHandle handle)
+        public async Task<MenuDetail> GetMenuDetailAsync(MenuHandle handle)
         {
             Uri uri = new Uri(Constants.RestUrl + "menus/" + handle.URLName);
-            Menu menu = null;
+            MenuDetail menu = null;
             try
             {
                 HttpResponseMessage response = await client.GetAsync(uri);
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    menu = JsonConvert.DeserializeObject<Menu>(content);
+                    menu = JsonConvert.DeserializeObject<MenuDetail>(content);
                 }
             }
             catch (Exception ex)
@@ -39,17 +40,17 @@ namespace hollywood.Services
             return menu;
         }
 
-        public async Task<List<MenuHandle>> GetMenusAsync()
+        public async Task<ObservableCollection<MenuHandle>> GetMenusAsync()
         {
             Uri uri = new Uri(Constants.RestUrl + "menus/");
-            List<MenuHandle> menus = new List<MenuHandle>();
+            ObservableCollection<MenuHandle> menus = new ObservableCollection<MenuHandle>();
             try
             {
                 HttpResponseMessage response = await client.GetAsync(uri);
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    menus = JsonConvert.DeserializeObject<List<MenuHandle>>(content);
+                    menus = JsonConvert.DeserializeObject<ObservableCollection<MenuHandle>>(content);
                 }   
             }
             catch (Exception ex)
