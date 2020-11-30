@@ -16,18 +16,16 @@ namespace hollywood.Views
         
         public MenuListPage()
         {
-            
-            BindingContext = vm = new MenuListViewModel();
-            vm.RefreshMenus();
             InitializeComponent();
+            BindingContext = vm = new MenuListViewModel();
         }
 
-        //public async void ButtonClicked(object sender, EventArgs args) 
-        //{
-        //    //Button SenderButton = (Button)sender;
-        //    Debug.WriteLine("Am here");
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
 
-        //} 
+            vm.RefreshCommand.Execute(null);
+        }
         readonly MenuListViewModel vm;
     }
 }
