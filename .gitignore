@@ -704,3 +704,5 @@ MigrationBackup/
 .ionide/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,xamarinstudio
+/ramsay/django/Lib/site-packages/PIL/_imaging.cp37-win_amd64.pyd
+*.exe
