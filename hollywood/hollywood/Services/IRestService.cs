@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
 using hollywood.Models;
@@ -8,9 +9,9 @@ namespace hollywood.Services
 {
     public interface IRestService
     {
-        Task<List<MenuHandle>> GetMenusAsync ();
+        Task<ObservableCollection<MenuHandle>> GetMenusAsync ();
 
-        Task<Menu> GetMenuDetailAsync(MenuHandle handle);
+        Task<MenuDetail> GetMenuDetailAsync(MenuHandle handle);
 
     }
 }
