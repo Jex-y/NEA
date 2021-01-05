@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="hollywood.Views.MenuDetailPage"
+             x:Class="hollywood.Views.MenuPage"
              Title="{Binding Title}">
 
     <StackLayout>
-        
+
         <RefreshView 
             Command="{Binding RefreshCommand}"
             IsRefreshing="{Binding IsRefreshing}">
             <CollectionView
-                ItemsSource="{Binding ViewMenu.SubMenus}">
+                ItemsSource="{Binding Menu.SubMenus}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -54,7 +54,7 @@
         </RefreshView>
 
         <CollectionView
-            ItemsSource="{Binding ViewMenu.Items}"
+            ItemsSource="{Binding Menu.Items}"
             ItemsLayout="VerticalGrid, 2">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -96,6 +96,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        
+
     </StackLayout>
 </ContentPage>

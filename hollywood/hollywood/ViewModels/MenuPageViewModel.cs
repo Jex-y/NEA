@@ -9,37 +9,36 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Menu = hollywood.Models.Menu;
 
 namespace hollywood.ViewModels
 {
-    public class MenuListViewModel : BaseViewModel
+    public class MenuPageViewModel : BaseViewModel
     {
-        public MenuListViewModel()
+        public MenuPageViewModel(string title = "Menu")
         {
-            Title = "Menu";
+            Title = title;
         }
 
-        
-
-        ObservableCollection<MenuHandle> menus = new ObservableCollection<MenuHandle>();
-        public ObservableCollection<MenuHandle> Menus
+        Menu _menu;
+        public Menu Menu
         {
-            get { return menus; }
-            private set { SetProperty(ref menus, value); }
+            get { return _menu; }
+            private set { SetProperty(ref _menu, value); }
         }
 
-        bool isRefreshing = false;
+        bool _isRefreshing = false;
         public bool IsRefreshing
         {
-            get { return isRefreshing; }
-            private set { SetProperty(ref isRefreshing, value); }
+            get { return _isRefreshing; }
+            private set { SetProperty(ref _isRefreshing, value); }
         }
 
         DateTime MenusAge = DateTime.MinValue;
 
-        public ICommand RefreshCommand => new Command(async () => await refreshMenus());
+        public ICommand RefreshCommand => new Command(async () => await RefreshMenus());
 
-        async Task refreshMenus()
+        async Task RefreshMenus()
         {
             IsRefreshing = true;
             TimeSpan age = DateTime.Now - MenusAge;
@@ -47,7 +46,7 @@ namespace hollywood.ViewModels
             {
                 try
                 {
-                    Menus = await App.ApiConnection.GetMenusAsync();
+                    Menu = await App.ApiConnection.GetMenuAsync(null);
                     MenusAge = DateTime.Now;
                 }
                 catch { }

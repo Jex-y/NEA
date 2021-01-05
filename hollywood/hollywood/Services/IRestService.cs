@@ -9,9 +9,7 @@ namespace hollywood.Services
 {
     public interface IRestService
     {
-        Task<ObservableCollection<MenuHandle>> GetMenusAsync ();
-
-        Task<MenuDetail> GetMenuDetailAsync(MenuHandle handle);
+        Task<Menu> GetMenuAsync(MenuHandle handle);
 
     }
 }

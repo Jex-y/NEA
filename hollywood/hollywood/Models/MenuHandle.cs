@@ -14,16 +14,10 @@ namespace hollywood.Models
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("url_name")]
-        public string URLName { get; set; }
+        public string UrlName { get; set; }
         [JsonProperty("description")]
         public string Description { get; set; }
         [JsonProperty("image")]
         public Uri ImageURI { get; set; }
-
-        public ICommand Tapped => new Command(async () => await tapped());
-
-        async Task tapped() {
-            Debug.WriteLine("Was tapped");
-        } 
     }
 }
