@@ -6,11 +6,11 @@ using System.Text;
 
 namespace hollywood.Models
 {
-    public class MenuDetail
+    public class Menu
     {
         [JsonProperty("menus")]
-        public ObservableCollection<MenuHandle> SubMenus;
+        public ObservableCollection<MenuHandle> SubMenus { get; set; }
         [JsonProperty("items")]
-        public ObservableCollection<Item> items;
+        public ObservableCollection<Item> Items { get; set; }
     }
 }

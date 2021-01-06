@@ -30,7 +30,7 @@
     </Shell.Resources>
 
     <TabBar>
-        <ShellContent Title="Menu" Icon="tab_about.png" Route="MenuListPage" ContentTemplate="{DataTemplate local:MenuListPage}" />
+        <ShellContent Title="Menu" Icon="tab_about.png" Route="MenuPage" ContentTemplate="{DataTemplate local:MenuPage}" />
     </TabBar>
     
 </Shell>
