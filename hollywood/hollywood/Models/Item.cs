@@ -10,16 +10,16 @@ namespace hollywood.Models
     public class Item
     {
         [JsonProperty("id")]
-        public Guid ID;
+        public Guid ID { get; private set; }
         [JsonProperty("name")]
-        public string Name;
+        public string Name { get; set; }
         [JsonProperty("description")]
-        public string Description;
+        public string Description { get; set; }
         [JsonProperty("price")]
-        public decimal Price;
+        public decimal Price { get; set; }
         [JsonProperty("tags")]
-        public ObservableCollection<Tag> Tags;
+        public ObservableCollection<Tag> Tags { get; set; }
         [JsonProperty("image")]
-        public Uri ImageURI;
+        public Uri ImageURI { get; set; }
     }
 }

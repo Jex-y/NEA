@@ -7,6 +7,8 @@ using System.Windows.Input;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 
+using hollywood.Views;
+
 namespace hollywood.Models
 {
     public class MenuHandle
@@ -19,5 +21,24 @@ namespace hollywood.Models
         public string Description { get; set; }
         [JsonProperty("image")]
         public Uri ImageURI { get; set; }
+
+        readonly ICommand _tapCommand;
+
+        public MenuHandle() 
+        {
+            _tapCommand = new Command(async () => await OnTapped());
+
+        }
+
+        public ICommand TapCommand
+        {
+            get { return _tapCommand; }
+        }
+
+        async Task OnTapped()
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new MenuPage(this));
+        }
+
     }
 }

@@ -26,10 +26,7 @@ namespace hollywood.Services
         /// <returns>Task returning a Menu object</returns>
         public async Task<Menu> GetMenuAsync(MenuHandle handle)
         {
-
-            string UrlName = (handle == null) ? handle.UrlName : "";                // Could use is null pattern in higher version of C#
-            //string UrlName = "";
-            Uri uri = new Uri(Constants.RestUrl + "menus/" + UrlName);
+            Uri uri = new Uri(Constants.RestUrl + "menus/" + handle.UrlName);
             Menu menu = null;
             try
             {
