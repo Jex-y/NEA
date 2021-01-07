@@ -4,6 +4,13 @@
              x:Class="hollywood.Views.MenuPage"
              Title="{Binding Title}">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Name="Search"
+                     Order="Primary"
+                     Icon="search.png"
+                     Priority="0"
+                     Command="{Binding SearchCommand}"/>
+    </ContentPage.ToolbarItems>
     <StackLayout>
         
         <!--Over complicated and is probably not needed-->
@@ -12,6 +19,7 @@
             Command="{Binding RefreshCommand}"
             IsRefreshing="{Binding IsRefreshing}">
         </RefreshView>-->
+        
         
         <CollectionView
             ItemsSource="{Binding MenuData.SubMenus}"
@@ -34,40 +42,36 @@
                                                     CommandParameter="{Binding}"/>
                         </Grid.GestureRecognizers>
 
-                        <Image 
-                            Source="{Binding ImageURI}"
-                            HorizontalOptions="FillAndExpand"
-                            VerticalOptions="FillAndExpand" 
-                            Aspect="AspectFill"
-                            Opacity="0.64"
-                            Grid.RowSpan="2"
-                            Grid.ColumnSpan="3"
-                            InputTransparent="True"/>
+                        <Image Source="{Binding ImageURI}"
+                               HorizontalOptions="FillAndExpand"
+                               VerticalOptions="FillAndExpand" 
+                               Aspect="AspectFill"
+                               Opacity="0.64"
+                               Grid.RowSpan="2"
+                               Grid.ColumnSpan="3"
+                               InputTransparent="True"/>
 
-                        <Label 
-                            Text="{Binding Name}"
-                            FontAttributes="Bold"
-                            FontSize="Large"
-                            TextColor="Black"
-                            Grid.Row="0"
-                            Grid.ColumnSpan="3"
-                            InputTransparent="True"/>
+                        <Label Text="{Binding Name}"
+                               FontAttributes="Bold"
+                               FontSize="Large"
+                               TextColor="Black"
+                               Grid.Row="0"
+                               Grid.ColumnSpan="3"
+                               InputTransparent="True"/>
 
-                        <Label 
-                            Text="{Binding Description}"
-                            FontSize="Body" 
-                            TextColor="Black"
-                            Grid.Row="1"
-                            Grid.ColumnSpan="3"
-                            InputTransparent="True"/>
+                        <Label Text="{Binding Description}"
+                               FontSize="Body" 
+                               TextColor="Black"
+                               Grid.Row="1"
+                               Grid.ColumnSpan="3"
+                               InputTransparent="True"/>
 
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <CollectionView
-            ItemsSource="{Binding MenuData.Items}">
+        <CollectionView ItemsSource="{Binding MenuData.Items}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -78,32 +82,28 @@
                             <RowDefinition Height="16" />
                         </Grid.RowDefinitions>
 
-                        <Image 
-                            Source="{Binding ImageURI}"
-                            HorizontalOptions="FillAndExpand"
-                            VerticalOptions="FillAndExpand" 
-                            Aspect="AspectFill"
-                            Opacity="0.64"
-                            Grid.RowSpan="4"/>
+                        <Image Source="{Binding ImageURI}"
+                               HorizontalOptions="FillAndExpand"
+                               VerticalOptions="FillAndExpand" 
+                               Aspect="AspectFill"
+                               Opacity="0.64"
+                               Grid.RowSpan="4"/>
 
-                        <Label 
-                            Text="{Binding Name}"
-                            FontAttributes="Bold"
-                            FontSize="Large"
-                            TextColor="Black"
-                            Grid.Row="1"/>
+                        <Label Text="{Binding Name}"
+                               FontAttributes="Bold"
+                               FontSize="Large"
+                               TextColor="Black"
+                               Grid.Row="1"/>
 
-                        <Label 
-                            Text="{Binding Description}"
-                            FontSize="Body" 
-                            TextColor="Black"
-                            Grid.Row="2"/>
+                        <Label Text="{Binding Description}"
+                               FontSize="Body" 
+                               TextColor="Black"
+                               Grid.Row="2"/>
 
-                        <Label 
-                            Text="{Binding Price, StringFormat='{0:C}'}"
-                            FontSize="Body" 
-                            TextColor="Black"
-                            Grid.Row="3"/>
+                        <Label Text="{Binding Price, StringFormat='{0:C}'}"
+                               FontSize="Body" 
+                               TextColor="Black"
+                               Grid.Row="3"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

@@ -9,6 +9,7 @@ using Xamarin.Forms.Xaml;
 
 using hollywood.ViewModels;
 using hollywood.Models;
+using hollywood.Services;
 
 namespace hollywood.Views
 {

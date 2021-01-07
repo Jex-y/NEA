@@ -45,5 +45,27 @@ namespace hollywood.Services
 
             return menu;
         }
+
+        public async Task<ObservableCollection<Item>> GetSearchResults(string searchTerm) 
+        {
+            Uri uri = new Uri(Constants.RestUrl + "items/search=" + searchTerm);
+            ObservableCollection<Item> results = null;
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(uri);
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    results = JsonConvert.DeserializeObject<ObservableCollection<Item>>(content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
+
+            return results;
+        }
     }
 }

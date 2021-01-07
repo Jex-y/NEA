@@ -29,8 +29,13 @@
         </ResourceDictionary>
     </Shell.Resources>
 
-    <TabBar>
-        <ShellContent Title="Menu" Icon="tab_about.png" Route="MenuPage" ContentTemplate="{DataTemplate local:MenuPage}" />
+    <TabBar x:Name="tab">
+        <ShellContent x:Name="MenuPageTab"
+                      Title="Menu" 
+                      Icon="tab_about.png" 
+                      Route="MenuPage" 
+                      ContentTemplate="{DataTemplate local:MenuPage}" />
     </TabBar>
+    
     
 </Shell>

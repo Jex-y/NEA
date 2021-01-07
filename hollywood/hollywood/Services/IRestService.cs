@@ -10,6 +10,7 @@ namespace hollywood.Services
     public interface IRestService
     {
         Task<Menu> GetMenuAsync(MenuHandle handle);
+        Task<ObservableCollection<Item>> GetSearchResults(string searchTerm);
 
     }
 }

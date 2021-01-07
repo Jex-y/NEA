@@ -1,13 +1,8 @@
 ﻿using hollywood.Models;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 using Menu = hollywood.Models.Menu;
@@ -21,9 +16,11 @@ namespace hollywood.ViewModels
         readonly MenuHandle MenuHandle; // Change if u think of a better name
         Menu _menuData;
         bool _hasMenus = false;
-        bool _isRefreshing = false;
-        readonly ICommand _refreshCommand;
         DateTime MenusAge = DateTime.MinValue;
+        bool _isRefreshing = false;
+
+        readonly ICommand _refreshCommand;
+        readonly ICommand _searchCommand;
 
         public MenuPageViewModel(MenuHandle display = null)
         {
@@ -37,11 +34,11 @@ namespace hollywood.ViewModels
                     ImageURI=null };
             }
             MenuHandle = display;
-            Debug.WriteLine(MenuHandle.UrlName);
             Title = MenuHandle.Name;
 
             // Configure refresh command
             _refreshCommand = new Command(async () => await OnRefresh());
+            _searchCommand = new Command(async () => await OnSearch());
         }
 
         public Menu MenuData
@@ -64,7 +61,12 @@ namespace hollywood.ViewModels
 
         public ICommand RefreshCommand 
         {
-            get { return _refreshCommand;  }
+            get { return _refreshCommand; }
+        }
+
+        public ICommand SearchCommand 
+        {
+            get { return _searchCommand; }
         }
 
         async Task OnRefresh()
@@ -81,11 +83,16 @@ namespace hollywood.ViewModels
                 catch (Exception ex)
                 {
                     Debug.WriteLine(@"\tERROR {0}", ex.Message);
-                    throw ex;
+                    throw ex; // TODO: Make a popup or something??
                 }
             }
             HasMenus = MenuData.SubMenus.Count > 0;
             IsRefreshing = false;
+        }
+
+        async Task OnSearch()
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new SearchPage());
         }
     }
 }

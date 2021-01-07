@@ -12,6 +12,7 @@ namespace hollywood
         {
             InitializeComponent();
             Routing.RegisterRoute(nameof(MenuPage), typeof(MenuPage));
+            tab.CurrentItem = MenuPageTab;
         }
 
     }
