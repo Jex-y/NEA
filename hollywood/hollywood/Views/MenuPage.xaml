@@ -19,7 +19,7 @@
             Command="{Binding RefreshCommand}"
             IsRefreshing="{Binding IsRefreshing}">
         </RefreshView>-->
-        
+        <!--TODO: Fix items UI-->
         
         <CollectionView
             ItemsSource="{Binding MenuData.SubMenus}"

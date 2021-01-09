@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Xamarin.Forms;
 
 using hollywood.Models;
+using hollywood.Services;
 
 namespace hollywood.ViewModels
 {
@@ -15,9 +16,11 @@ namespace hollywood.ViewModels
     {
         ObservableCollection<Item> _searchResults;
         readonly ICommand _searchCommand;
+        readonly IRestService ApiConnection;
 
         public SearchPageViewModel() 
         {
+            ApiConnection = DependencyService.Get<IRestService>();
             _searchCommand = new Command<string>(async (text) => await OnSearchTextChange(text));
         }
 
@@ -36,7 +39,7 @@ namespace hollywood.ViewModels
         {
             try
             {
-                SearchResults = await App.ApiConnection.GetSearchResults(searchTerm);
+                SearchResults = await ApiConnection.GetSearchResults(searchTerm);
             }
             catch (Exception ex)
             {
