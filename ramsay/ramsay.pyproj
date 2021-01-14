@@ -104,11 +104,6 @@
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="readme.html">
-      <SubType>WebBrowser</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Interpreter Include="django\">
       <Id>django</Id>
       <Version>3.7</Version>

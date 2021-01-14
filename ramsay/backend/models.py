@@ -7,21 +7,22 @@ from django.utils.text import slugify
 
 from . import managers
 
-def get_upload_name(instance, filename):
+def get_upload_name(dir, instance, filename):
         """
         Passed to UploadField to get a path to store the file.
 
         File path is unqiue with the id attribute.
 
         Parameters:
-            instance (Tag): instance of tag to create the file path for 
+            dir (str): directory to store image in
+            instance (Model): instance of tag to create the file path for 
             filename (str): the filename of the uploded image. Used to get correct file extension.
 
             Returns:
                 (str): relative filepath to save the icon image
 
         """
-        return "images/tags/{}.{}".format(instance.pk,filename.split('.')[-1])
+        return "images/{}/{}.{}".format(dir,instance.pk,filename.split('.')[-1])
 
 class Tag(models.Model):
     """
@@ -50,7 +51,9 @@ class Tag(models.Model):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     name = models.CharField(max_length=32)
-    icon = models.ImageField(upload_to=get_upload_name, blank=True, null=True)
+    icon = models.ImageField(
+        upload_to=lambda instance, filename: get_upload_name("tags", instance, filename),
+        blank=True, null=True)
 
     def __str__(self):
         """
@@ -74,7 +77,7 @@ class Item(models.Model):
     --------
     id : UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
         primary key for database
-    name : CharField(max_length=64)
+    name : CharField(max_length=64) 
         human readable name
     description : CharField(max_length=256, blank=True, null=True)
         human readable description
@@ -85,7 +88,7 @@ class Item(models.Model):
     available : BooleanField(default=True)
         whether the item is currently available
         used to toggle if the item is available manually
-    image: ImageField(upload_to=self.get_upload_name, blank=True, null=True)
+    image : ImageField(upload_to=self.get_upload_name, blank=True, null=True)
         image showing the item
 
     Methods
@@ -103,7 +106,9 @@ class Item(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=6)
     tags = models.ManyToManyField(Tag, blank=True)
     available = models.BooleanField(default=True)
-    image = models.ImageField(upload_to=get_upload_name, blank=True, null=True)
+    image = models.ImageField(
+        upload_to=lambda instance, filename: get_upload_name("items", instance, filename),
+        blank=True, null=True)
 
     def __str__(self):
         """
@@ -181,7 +186,9 @@ class Menu(models.Model):
     super_menu = models.ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True)
     available = models.BooleanField(default=True)
     url_name = models.SlugField(max_length=64, editable=False)
-    image = models.ImageField(upload_to=get_upload_name, blank=True, null=True)
+    image = models.ImageField(
+        upload_to=lambda instance, filename: get_upload_name("menus", instance, filename),
+        blank=True, null=True)
 
     objects = managers.MenuManager()
 
