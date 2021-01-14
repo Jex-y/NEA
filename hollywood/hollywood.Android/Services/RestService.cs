@@ -1,23 +1,36 @@
-﻿using System;
+﻿using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Views;
+using Android.Widget;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-
-using hollywood.Models;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Net.Http;
+using Newtonsoft.Json;
+using Xamarin.Forms;
 
-namespace hollywood.Services
+using hollywood.Services;
+using hollywood.Models;
+
+using Menu = hollywood.Models.Menu;
+using Debug = System.Diagnostics.Debug;
+
+[assembly: Dependency(typeof(hollywood.Droid.Services.RestService))]
+namespace hollywood.Droid.Services
 {
-    public class RestService : IRestService
+    class RestService : IRestService
     {
         readonly HttpClient client;
-        public RestService() {
+        public RestService() 
+        {
             client = new HttpClient();
         }
-
         /// <summary>
         /// Gets menu from the server using REST API.
         /// Gets top level if handle is null otherwise gets the menu decribed by handle
@@ -46,7 +59,7 @@ namespace hollywood.Services
             return menu;
         }
 
-        public async Task<ObservableCollection<Item>> GetSearchResults(string searchTerm) 
+        public async Task<ObservableCollection<Item>> GetSearchResults(string searchTerm)
         {
             Uri uri = new Uri(Constants.RestUrl + "items/search=" + searchTerm);
             ObservableCollection<Item> results = null;

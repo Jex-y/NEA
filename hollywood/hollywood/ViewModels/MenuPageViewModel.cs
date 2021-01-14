@@ -1,4 +1,5 @@
 ﻿using hollywood.Models;
+using hollywood.Services;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -21,9 +22,12 @@ namespace hollywood.ViewModels
 
         readonly ICommand _refreshCommand;
         readonly ICommand _searchCommand;
+        readonly IRestService ApiConnection;
 
         public MenuPageViewModel(MenuHandle display = null)
         {
+            ApiConnection = DependencyService.Get<IRestService>();
+
             if (display is null) // Handle top level case
             {
                 Debug.WriteLine("Was null");
@@ -37,8 +41,8 @@ namespace hollywood.ViewModels
             Title = MenuHandle.Name;
 
             // Configure refresh command
-            _refreshCommand = new Command(async () => await OnRefresh());
-            _searchCommand = new Command(async () => await OnSearch());
+            _refreshCommand = new Command(async() => await OnRefresh());
+            _searchCommand = new Command(async() => await OnSearch());
         }
 
         public Menu MenuData
@@ -77,7 +81,7 @@ namespace hollywood.ViewModels
             {
                 try
                 {
-                    MenuData = await App.ApiConnection.GetMenuAsync(MenuHandle);
+                    MenuData = await ApiConnection.GetMenuAsync(MenuHandle);
                     MenusAge = DateTime.Now;
                 }
                 catch (Exception ex)

@@ -19,7 +19,7 @@
             Command="{Binding RefreshCommand}"
             IsRefreshing="{Binding IsRefreshing}">
         </RefreshView>-->
-        
+        <!--TODO: Fix items UI-->
         
         <CollectionView
             ItemsSource="{Binding MenuData.SubMenus}"
@@ -74,36 +74,47 @@
         <CollectionView ItemsSource="{Binding MenuData.Items}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Margin="4,16,4,16"
+                          HeightRequest="64">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="64" />
-                            <RowDefinition Height="32" />
                             <RowDefinition Height="*" />
-                            <RowDefinition Height="16" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TapCommand}"
+                                                    CommandParameter="{Binding}"/>
+                        </Grid.GestureRecognizers>
+
                         <Image Source="{Binding ImageURI}"
-                               HorizontalOptions="FillAndExpand"
                                VerticalOptions="FillAndExpand" 
                                Aspect="AspectFill"
-                               Opacity="0.64"
-                               Grid.RowSpan="4"/>
+                               Opacity="0.80"
+                               Grid.RowSpan="2"
+                               Grid.Column="2"
+                               InputTransparent="True"/>
 
                         <Label Text="{Binding Name}"
                                FontAttributes="Bold"
                                FontSize="Large"
                                TextColor="Black"
-                               Grid.Row="1"/>
-
-                        <Label Text="{Binding Description}"
-                               FontSize="Body" 
-                               TextColor="Black"
-                               Grid.Row="2"/>
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               InputTransparent="True"/>
 
                         <Label Text="{Binding Price, StringFormat='{0:C}'}"
                                FontSize="Body" 
+                               FontAttributes="Bold"
                                TextColor="Black"
-                               Grid.Row="3"/>
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               InputTransparent="True"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
