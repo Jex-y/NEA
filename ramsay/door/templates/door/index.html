@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        input {
+            padding: 5px;
+            background-color: transparent;
+            border: none;
+            border-bottom: solid 4px #8c52ff;
+            width: 250px;
+            font-size: 16px;
+        }
+
+        .qr-btn {
+            background-color: #8c52ff;
+            padding: 8px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+
+    <title>{{ settings.NAME }}</title>
+</head>
+<body>
+    <h3>QR Code Generator</h3>
+    <div><input id="table-no" type="number" placeholder="Table no" /></div>
+    <br />
+    <div>
+        <button class="qr-btn" onclick="generateQRCode()">Create new session</button>
+    </div>
+    <br />
+    <p id="qr-result">This is deault QR code:</p>
+    <canvas id="qr-code"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script>
+        var qr;
+        (function () {
+            qr = new QRious({
+                element: document.getElementById('qr-code'),
+                size: 200,
+                value: ''
+            });
+        })();
+
+        function getNewSession() {
+            return "abcd";
+        }
+
+        function generateQRCode() {
+            var sessId = getNewSession();
+            document.getElementById("qr-result").innerHTML = "Session ID:" + sessId;
+            qr.set({
+                foreground: 'black',
+                size: 200,
+                value: sessId
+            });
+        }
+    </script>
+
+</body>
+</html>
