@@ -21,5 +21,11 @@ namespace hollywood.Views
             InitializeComponent();
             BindingContext = vm = new ItemPopupPageViewModel(item);
         }
+
+        protected override void OnDisappearing()
+        {
+            vm.CloseCommand.Execute(null);
+            base.OnDisappearing();
+        }
     }
 }

@@ -15,10 +15,13 @@ namespace hollywood.Models
     {
         [JsonProperty("name")]
         public string Name { get; set; }
+
         [JsonProperty("url_name")]
         public string UrlName { get; set; }
+
         [JsonProperty("description")]
         public string Description { get; set; }
+
         [JsonProperty("image")]
         public Uri ImageURI { get; set; }
 
