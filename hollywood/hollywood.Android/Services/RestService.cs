@@ -21,8 +21,8 @@ using hollywood.Models;
 using Menu = hollywood.Models.Menu;
 using Debug = System.Diagnostics.Debug;
 
-[assembly: Dependency(typeof(hollywood.Droid.RestService))]
-namespace hollywood.Droid
+[assembly: Dependency(typeof(hollywood.Droid.Services.RestService))]
+namespace hollywood.Droid.Services
 {
     class RestService : IRestService
     {

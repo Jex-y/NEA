@@ -41,8 +41,8 @@ namespace hollywood.ViewModels
             Title = MenuHandle.Name;
 
             // Configure refresh command
-            _refreshCommand = new Command(async () => await OnRefresh());
-            _searchCommand = new Command(async () => await OnSearch());
+            _refreshCommand = new Command(async() => await OnRefresh());
+            _searchCommand = new Command(async() => await OnSearch());
         }
 
         public Menu MenuData

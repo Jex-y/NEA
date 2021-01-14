@@ -26,7 +26,7 @@ namespace hollywood.Models
 
         public MenuHandle() 
         {
-            _tapCommand = new Command(async () => await OnTapped());
+            _tapCommand = new Command(async() => await OnTapped());
 
         }
 

@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="hollywood.Views.ItemPopupPage"
+             xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+             xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+             xmlns:controls="clr-namespace:hollywood.Controls;assembly=hollywood">
+    
+    <!--https://docs.microsoft.com/en-us/answers/questions/221603/xamarin-forms-popup-from-bottom-of-screen.html-->
+
+    <pages:PopupPage.Animation>
+        <animations:ScaleAnimation 
+            PositionIn="Bottom"
+            PositionOut="Bottom"
+           
+            DurationIn="400"
+            DurationOut="300"
+            EasingIn="SinOut"
+            EasingOut="SinIn"
+            HasBackgroundAnimation="True"/>
+    </pages:PopupPage.Animation>
+    
+    <StackLayout 
+        VerticalOptions="EndAndExpand" 
+        HorizontalOptions="FillAndExpand" 
+       >
+        <controls:CornerRadiusFrame CornerRadius="20,20,0,0"  
+                                    HorizontalOptions="FillAndExpand" 
+                                    HeightRequest="200" >
+            
+            <StackLayout Margin="20,20,20,20"
+                         HeightRequest="180">
+                
+                <Label Text="{Binding Item.Name}"
+                       FontAttributes="Bold"
+                       TextColor="Black"/>
+                
+                <!--<Image Source="{Binding Item.ImageURI}"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand" 
+                       Aspect="AspectFill"
+                       Opacity="1"/>-->
+
+                <Label Text="{Binding Item.Description}"
+                       TextColor="Black"/>
+
+                <Grid HeightRequest="128"
+                      Margin="64,4,64,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ImageButton Source="minus.png"
+                                 Grid.Column="0"
+                                 BackgroundColor="#00000000"
+                                 Command="{Binding RemoveCommand}"
+                                 Opacity="{Binding RemoveOpacity}"/>
+
+                    <Label Text="{Binding NumItems}"
+                           TextColor="Black"
+                           Grid.Column="1"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontSize="Title"
+                           FontAttributes="Bold"/>
+
+                    <ImageButton Source="add.png"
+                                 Grid.Column="2"
+                                 BackgroundColor="#00000000"
+                                 Command="{Binding AddCommand}"/>
+
+                </Grid>
+
+                <Button Text="{Binding BasketText}"
+                        BackgroundColor="#121212"
+                        CornerRadius="32"
+                        TextColor="White"
+                        Command="{Binding AddToBasketCommand}"/>
+
+            </StackLayout>
+        </controls:CornerRadiusFrame>
+
+    </StackLayout>
+</pages:PopupPage>
