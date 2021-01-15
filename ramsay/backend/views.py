@@ -3,6 +3,7 @@ from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status
 from . import models
 from . import serializers
 
@@ -59,3 +60,47 @@ class ItemMenuListView(APIView):
                 }
         
         return Response(data)
+
+class SessionCreateView(APIView):
+
+    def post(self, request, format=None):
+        table_num = request.query_params.get('table_num')
+        if not table_num:
+            data = {
+                "result":"Error: Parametrs not understood",
+                "sessid":None,
+                }
+
+            requestStatus = status.HTTP_400_BAD_REQUEST
+
+        elif models.Session.objects.filter(table=table_num, end_time=None).count() > 0:
+            data = {
+                "result":"Error: Open session already exsists for that table",
+                "sessid":None,
+                }
+
+            requestStatus = status.HTTP_409_CONFLICT
+
+        else:
+            try:
+                table = models.Table.objects.get(table_number = table_num)
+
+                sess = models.Session.objects.create(table=table)
+
+                data = {
+                    "result":"Session created",
+                    "sessid":sess.sessId,
+                    }
+
+                requestStatus = status.HTTP_201_CREATED
+            except:
+                data = {
+                    "result":f"Error: table with number {table_num} does not exist",
+                    "sessid":None
+                    }
+
+                requestStatus = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+        return Response(data, status=requestStatus)
+
+        

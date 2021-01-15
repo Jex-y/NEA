@@ -23,8 +23,10 @@ class TableAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     pass
 
-
 @admin.register(ItemOrder)
 class ItemOrderAdmin(admin.ModelAdmin):
     pass
 
+@admin.register(Session)
+class SessionAdmin(admin.ModelAdmin):
+    pass

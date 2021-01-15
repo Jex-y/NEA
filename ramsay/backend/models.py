@@ -348,7 +348,7 @@ class Session(models.Model):
     """
     sessId = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     table = models.ForeignKey(Table, on_delete=models.PROTECT)
-    start_time = models.DateTimeField(null=True, blank=True)
+    start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True)
 
             
