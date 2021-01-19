@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using hollywood.Models;
+using hollywood.Views;
 
 namespace hollywood
 {
@@ -13,7 +14,7 @@ namespace hollywood
             
             InitializeComponent();
 
-            MainPage = new AppShell();
+            MainPage = new StartPage();
         }
 
         protected override void OnStart()

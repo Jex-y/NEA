@@ -48,9 +48,9 @@ namespace hollywood.ViewModels
             RemoveOpacity = 1.0f;
             AddToBasketOpacity = 1.0f;
 
-            _closeCommand = new Command(async() => await OnClose());
-            _addComamnd = new Command(async() => await OnAdd());
-            _removeCommand = new Command(async() => await OnRemove());
+            _closeCommand = new Command(async () => await OnClose());
+            _addComamnd = new Command(async () => await OnAdd());
+            _removeCommand = new Command(async () => await OnRemove());
             _addToBasketCommand = new Command(async () => await OnAddToBasket());
         }
 

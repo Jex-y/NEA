@@ -14,12 +14,14 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
 using Xamarin.Forms;
+using Xamarin.Essentials;
 
 using hollywood.Services;
 using hollywood.Models;
 
 using Menu = hollywood.Models.Menu;
 using Debug = System.Diagnostics.Debug;
+using Application = Android.App.Application;
 
 [assembly: Dependency(typeof(hollywood.Droid.Services.RestService))]
 namespace hollywood.Droid.Services
@@ -53,7 +55,7 @@ namespace hollywood.Droid.Services
             catch (Exception ex)
             {
                 Debug.WriteLine(@"\tERROR {0}", ex.Message);
-                throw ex;
+                await WarnUserCannotConnect();
             }
 
             return menu;
@@ -79,6 +81,36 @@ namespace hollywood.Droid.Services
             }
 
             return results;
+        }
+
+        async Task WarnUserCannotConnect() 
+        {
+            NetworkAccess networkState = Connectivity.NetworkAccess;
+
+            var popup = new AlertDialog.Builder(Application.Context);
+            AlertDialog alert = popup.Create();
+            alert.SetTitle("Cannot connect to server");
+
+            if (networkState == NetworkAccess.Internet)
+            {
+                // Can connect to intenet but cannot connect to server
+                alert.SetMessage("Cannot reach server, please try again later.");
+                alert.SetButton("Ok", (sender, args) =>
+                {
+
+                });
+
+            }
+            else 
+            {
+                // Canot connect to internet
+                alert.SetMessage("Cannot connect to the internet, please connect and try again.");
+                alert.SetButton("Ok", (sender, args) =>
+                {
+
+                });
+            }
+            alert.Show();
         }
     }
 }
