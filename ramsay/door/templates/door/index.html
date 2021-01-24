@@ -1,7 +1,6 @@
 ﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-
 <head>
     <meta charset="utf-8" />
 
@@ -41,6 +40,10 @@
     <canvas id="qr-code"></canvas>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    {% csrf_token %}
+    <script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    </script>
     <script>
         var qr;
         (function () {
@@ -52,16 +55,27 @@
         })();
 
         async function getNewSession(table_num) {
-            let response = await fetch('{% url 'backend:newsess' %}?table_num='+table_num, {method: 'POST'});
-            
-            if (response.ok)
-            {
-                let json = await response.json()
-                console.log(json)
-                return json.sessid;
-            } else 
-            {
-                alert("HTTP-Error: " + response.status + ", ");
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+            myHeaders.append("X-CSRFToken", csrftoken);
+
+            var urlencoded = new URLSearchParams();
+            urlencoded.append("table_num", table_num);
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: urlencoded,
+              redirect: 'follow'
+            };
+
+            try {
+                var response = await fetch("/api/sessions/new", requestOptions);
+                var json_data = await response.json();
+                console.log(json_data.info);
+                return json_data.sessid;
+            } catch (expt) {
+                console.error(expt);
                 return "";
             }
         }
