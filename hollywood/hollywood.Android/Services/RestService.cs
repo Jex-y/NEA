@@ -83,6 +83,28 @@ namespace hollywood.Droid.Services
             return results;
         }
 
+        public async Task<bool> ValidateSessId(string sessId) 
+        {
+            Uri uri = new Uri(Constants.RestUrl + "sessions/validate");
+            bool result = false;
+            try
+            {
+                StringContent data = new StringContent(sessId);
+                HttpResponseMessage response = await client.PostAsync(uri, data);
+                // Could check body here but not necessary with current implementation.
+                if (response.IsSuccessStatusCode)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
+
+            return result;
+        }
         async Task WarnUserCannotConnect() 
         {
             NetworkAccess networkState = Connectivity.NetworkAccess;

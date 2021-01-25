@@ -11,6 +11,6 @@ namespace hollywood.Services
     {
         Task<Menu> GetMenuAsync(MenuHandle handle);
         Task<ObservableCollection<Item>> GetSearchResults(string searchTerm);
-
+        Task<bool> ValidateSessId(string sessId);
     }
 }
