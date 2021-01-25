@@ -1,5 +1,9 @@
+import datetime
+import uuid
 from django.http import Http404
 from django.db.models import Q
+from django.utils import timezone
+from django.core import exceptions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -64,7 +68,13 @@ class ItemMenuListView(APIView):
 class SessionCreateView(APIView):
 
     def post(self, request, format=None):
-        table_num = request.query_params.get('table_num')
+        table_num = request.POST.get('table_num')
+
+        try:
+            table_num = int(table_num)
+        except:
+            table_num = None
+
         if not table_num:
             data = {
                 "result":"Error: Parametrs not understood",
@@ -75,7 +85,7 @@ class SessionCreateView(APIView):
 
         elif models.Session.objects.filter(table=table_num, end_time=None).count() > 0:
             data = {
-                "result":"Error: Open session already exsists for that table",
+                "info":"Error: Open session already exsists for that table",
                 "sessid":None,
                 }
 
@@ -88,19 +98,66 @@ class SessionCreateView(APIView):
                 sess = models.Session.objects.create(table=table)
 
                 data = {
-                    "result":"Session created",
+                    "info":"Session created",
                     "sessid":sess.sessId,
                     }
 
                 requestStatus = status.HTTP_201_CREATED
             except:
                 data = {
-                    "result":f"Error: table with number {table_num} does not exist",
+                    "info":f"Error: table with number {table_num} does not exist",
                     "sessid":None
                     }
 
                 requestStatus = status.HTTP_500_INTERNAL_SERVER_ERROR
 
-        return Response(data, status=requestStatus)
+        return Response(data, requestStatus)
+
+
+class SessionValidateView(APIView):
+
+    def valid_uuidV4(self, value):
+        value = str(value)
+        try:
+            test_uuid = uuid.UUID(value, version=4)
+            assert(str(test_uuid) == value)
+            result = True
+        except (ValueError, AssertionError):
+            result = False
+        return result
+    
+    def post(self, request, format=None):
+        # TODO: Check tables aswell?
+        
+        valid = False
+        msg = "Request format incorrect"
+        requestStatus = status.HTTP_400_BAD_REQUEST
+        sessId = request.POST.get('sessid')
+
+        if self.valid_uuidV4(sessId):
+            try:
+                sess = models.Session.objects.get(sessId=sessId)
+                if sess.start_time <= timezone.now() and sess.end_time is None and not (sess.start_time <= timezone.now() - datetime.timedelta(hours=12)):
+                    # Check that start time is before now, session has not been closed and the session has not been opened more than 12 hours ago
+                    msg = "Session valid"
+                    valid = True
+                    requestStatus = status.HTTP_200_OK
+                else:
+                    msg = "Session time invalid"
+                    requestStatus = status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE
+
+            except exceptions.ObjectDoesNotExist:
+                msg = f"No session with sessId={sessId} found in database"
+                requestStatus = status.HTTP_404_NOT_FOUND
+
+        data = {
+            "info": msg,
+            "valid":valid,
+            }
+
+        return Response(data, requestStatus)
 
         
+
+
+               

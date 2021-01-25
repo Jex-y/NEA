@@ -32,7 +32,7 @@ class Tag(models.Model):
     Optionally has an icon that is shown next to the item on the menu.
     ...
 
-    Attributes
+    Attributes+-
     --------
     id : UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
         primary key for database
@@ -348,7 +348,7 @@ class Session(models.Model):
     """
     sessId = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     table = models.ForeignKey(Table, on_delete=models.PROTECT)
-    start_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(null=True, blank=True)
 
             
