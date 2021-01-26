@@ -72,6 +72,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ContextService.cs" />
     <Compile Include="Services\QrScannerService.cs" />
     <Compile Include="Services\RestService.cs" />
   </ItemGroup>

@@ -62,7 +62,6 @@
     <Compile Include="door\apps.py" />
     <Compile Include="door\migrations\__init__.py" />
     <Compile Include="door\models.py" />
-    <Compile Include="door\tests.py" />
     <Compile Include="door\urls.py">
       <SubType>Code</SubType>
     </Compile>
@@ -73,13 +72,6 @@
     <Compile Include="ramsay\settings.py" />
     <Compile Include="ramsay\urls.py" />
     <Compile Include="ramsay\wsgi.py" />
-    <Compile Include="recipt\admin.py" />
-    <Compile Include="recipt\apps.py" />
-    <Compile Include="recipt\migrations\__init__.py" />
-    <Compile Include="recipt\models.py" />
-    <Compile Include="recipt\tests.py" />
-    <Compile Include="recipt\views.py" />
-    <Compile Include="recipt\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="backend\" />
@@ -89,15 +81,10 @@
     <Folder Include="door\templates\" />
     <Folder Include="door\templates\door\" />
     <Folder Include="ramsay\" />
-    <Folder Include="recipt\" />
-    <Folder Include="recipt\migrations\" />
-    <Folder Include="recipt\templates\" />
-    <Folder Include="recipt\templates\recipt\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="door\templates\door\index.html" />
     <Content Include="pytest.ini" />
-    <Content Include="recipt\templates\recipt\index.html" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>

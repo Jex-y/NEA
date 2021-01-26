@@ -6,19 +6,20 @@ using System.Windows.Input;
 
 using Rg.Plugins.Popup.Extensions;
 
-using hollywood.Models;
 using Xamarin.Forms;
+using hollywood.Models;
+using hollywood.Services;
 
 namespace hollywood.ViewModels
 {
     class ItemPopupPageViewModel : BaseViewModel
     {
+        readonly IContextService contextService;
         readonly Item _item;
         string _basketText;
         float _removeOpacity;
         float _addToBasketOpacity;
         int _numItems;
-        Order Basket = ((App)App.Current).ctx.Basket;
 
         readonly int startNum;
 
@@ -31,19 +32,10 @@ namespace hollywood.ViewModels
         public ItemPopupPageViewModel(Item item)
         {
             _item = item;
+            contextService = DependencyService.Get<IContextService>();
 
-            if (Basket.Items.ContainsKey(_item))
-            {
-                startNum = Basket.Items[_item];
-                NumItems = startNum;
-                Basket.Items.Remove(_item);
-                
-            }
-            else 
-            {
-                startNum = 0;
-                NumItems = 1;
-            }
+            startNum = contextService.Context.Basket.getNum(_item);
+            NumItems = startNum == 0 ? 1 : startNum;
 
             RemoveOpacity = 1.0f;
             AddToBasketOpacity = 1.0f;
@@ -106,10 +98,6 @@ namespace hollywood.ViewModels
         }
         async Task OnClose() 
         {
-            if (startNum > 0 && !Basket.Items.ContainsKey(_item)) 
-            {
-                Basket.Items.Add(_item, startNum);
-            }
             await App.Current.MainPage.Navigation.PopPopupAsync();
         }
 
@@ -136,10 +124,7 @@ namespace hollywood.ViewModels
 
         async Task OnAddToBasket() 
         {
-            if (NumItems > 0) 
-            {
-                Basket.Items.Add(_item, NumItems);
-            }
+            contextService.Context.Basket.updateNum(_item, NumItems);
 
             await App.Current.MainPage.Navigation.PopPopupAsync();
         }

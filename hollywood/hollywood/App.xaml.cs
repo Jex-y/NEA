@@ -19,17 +19,17 @@ namespace hollywood
 
         protected override void OnStart()
         {
-            ctx = new Context(); // TODO: Check if there is a file already.
+            
         }
 
         protected override void OnSleep()
         {
-            // TODO: Save context
+            
         }
 
         protected override void OnResume()
         {
-            // Context should persist?
+
         }
     }
 }
