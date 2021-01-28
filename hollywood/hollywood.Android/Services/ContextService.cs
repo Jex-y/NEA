@@ -43,14 +43,24 @@ namespace hollywood.Droid.Services
 
         async Task<Context> GetContext() 
         {
-            if (_context is null) 
+            if (_context is null)
             {
-                if (! await LoadContext()) 
+                if (!await LoadContext())
                 {
                     _context = new Context
                     {
                         Basket = new Order()
                     };
+                }
+                else 
+                {
+                    if (_context.LastModified < DateTime.Now.AddHours(Constants.MaxAge))
+                    {
+                        _context = new Context
+                        {
+                            Basket = new Order()
+                        };
+                    }
                 }
             }
             return _context;
@@ -58,13 +68,9 @@ namespace hollywood.Droid.Services
 
         async Task<bool> LoadContext() 
         {
-            Debug.WriteLine("Trying to load context");
-            Debug.WriteLine(fileName);
-            
             bool result = false;
             if (File.Exists(fileName)) 
             {
-                Debug.WriteLine("File exsists");
                 // string content = await File.ReadAllTextAsync(fileName);
                 // TODO: Investigate why this doesn't work 
                 string content = File.ReadAllText(fileName);
@@ -72,13 +78,13 @@ namespace hollywood.Droid.Services
                 _context = JsonConvert.DeserializeObject<Context>(content);
                 result = true;
             }
-            Debug.WriteLine("Finished loading");
+            
             return result;
         }
 
         async Task SaveContext() 
         {
-            Debug.WriteLine("Saving context");
+            _context.LastModified = DateTime.Now;
             string content = JsonConvert.SerializeObject(_context);
             await File.WriteAllTextAsync(fileName, content);
             Debug.WriteLine(content);

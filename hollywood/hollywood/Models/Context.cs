@@ -7,6 +7,11 @@ namespace hollywood.Models
 {
     public class Context
     {
+        public Context() 
+        {
+            LastModified = DateTime.Now;
+        }
+
         [JsonProperty("basket")]
         public Order Basket {get; set;}
 
