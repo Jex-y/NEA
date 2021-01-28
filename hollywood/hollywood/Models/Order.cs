@@ -11,35 +11,38 @@ namespace hollywood.Models
     {
         public Order() 
         {
-            Items = new Dictionary<Item, int>();
+            Items = new Dictionary<Guid, int>();
         }
         public event EventHandler OrderUpdated;
-        public Dictionary<Item, int> Items { get; set; } // Hashmap
 
+        [JsonProperty("itemId")]
+        public Dictionary<Guid, int> Items { get; set; } // Hashmap
+
+        [JsonProperty("notes")]
         public string notes { get; set; }
 
-        public int getNum(Item item) 
+        public int getNum(Guid itemId) 
         {
             int num = 0;
-            if (Items.ContainsKey(item)) 
+            if (Items.ContainsKey(itemId)) 
             {
-                num = Items[item];
+                num = Items[itemId];
             }
 
             return num;
         }
 
-        public void updateNum(Item item, int num) 
+        public void updateNum(Guid itemId, int num) 
         {
-            if (!(Items.ContainsKey(item) && Items[item] == num)) 
+            if (!(Items.ContainsKey(itemId) && Items[itemId] == num)) 
             {
                 if (num == 0)
                 {
-                    Items.Remove(item);
+                    Items.Remove(itemId);
                 }
                 else 
                 {
-                    Items[item] = num;
+                    Items[itemId] = num;
                 }
 
                 OnOrderUpdated(EventArgs.Empty);

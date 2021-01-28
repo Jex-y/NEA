@@ -34,7 +34,7 @@ namespace hollywood.ViewModels
             _item = item;
             contextService = DependencyService.Get<IContextService>();
 
-            startNum = contextService.Context.Basket.getNum(_item);
+            startNum = contextService.Context.Basket.getNum(_item.ID);
             NumItems = startNum == 0 ? 1 : startNum;
 
             RemoveOpacity = 1.0f;
@@ -124,7 +124,7 @@ namespace hollywood.ViewModels
 
         async Task OnAddToBasket() 
         {
-            contextService.Context.Basket.updateNum(_item, NumItems);
+            contextService.Context.Basket.updateNum(_item.ID, NumItems);
 
             await App.Current.MainPage.Navigation.PopPopupAsync();
         }

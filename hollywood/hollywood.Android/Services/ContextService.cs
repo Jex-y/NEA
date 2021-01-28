@@ -33,7 +33,7 @@ namespace hollywood.Droid.Services
             _context.Basket.OrderUpdated += async (sender, args) => await SaveContext();
         }
 
-        string fileName = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "context.json");
+        string fileName = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "contextsdfghjkl.json");
         Context _context = null;
 
         public Context Context {
@@ -64,7 +64,11 @@ namespace hollywood.Droid.Services
             bool result = false;
             if (File.Exists(fileName)) 
             {
-                string content = await File.ReadAllTextAsync(fileName);
+                Debug.WriteLine("File exsists");
+                // string content = await File.ReadAllTextAsync(fileName);
+                // TODO: Investigate why this doesn't work 
+                string content = File.ReadAllText(fileName);
+                Debug.WriteLine(content);
                 _context = JsonConvert.DeserializeObject<Context>(content);
                 result = true;
             }
@@ -77,6 +81,7 @@ namespace hollywood.Droid.Services
             Debug.WriteLine("Saving context");
             string content = JsonConvert.SerializeObject(_context);
             await File.WriteAllTextAsync(fileName, content);
+            Debug.WriteLine(content);
         }
 
         protected bool SetProperty<T>(ref T backingStore, T value,
