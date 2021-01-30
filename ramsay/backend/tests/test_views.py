@@ -189,7 +189,7 @@ class SessionValidateTest(TestCase):
     def test_valid(self):
         response = self.client.post(
             reverse('backend:validsess'),
-            {'sessid':str(self.valid_sess.sessId)},
+            {'sessId':str(self.valid_sess.sessId)},
             )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -226,7 +226,7 @@ class SessionValidateTest(TestCase):
 
         response = self.client.post(
             reverse('backend:validsess'),
-            {'sessid':str(old_sess.sessId)},
+            {'sessId':str(old_sess.sessId)},
             )
 
         self.assertEqual(response.status_code, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
@@ -243,7 +243,7 @@ class SessionValidateTest(TestCase):
 
         response = self.client.post(
             reverse('backend:validsess'),
-            {'sessid':str(future_sess.sessId)},
+            {'sessId':str(future_sess.sessId)},
             )
 
         self.assertEqual(response.status_code, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
@@ -261,7 +261,7 @@ class SessionValidateTest(TestCase):
 
         response = self.client.post(
             reverse('backend:validsess'),
-            {'sessid':str(closed_sess.sessId)},
+            {'sessId':str(closed_sess.sessId)},
             )
 
         self.assertEqual(response.status_code, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
@@ -276,7 +276,7 @@ class SessionValidateTest(TestCase):
 
         response = self.client.post(
             reverse('backend:validsess'),
-            {'sessid':str(test_uuid)},
+            {'sessId':str(test_uuid)},
             )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
