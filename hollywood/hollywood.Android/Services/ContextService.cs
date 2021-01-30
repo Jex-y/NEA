@@ -86,6 +86,7 @@ namespace hollywood.Droid.Services
         {
             _context.LastModified = DateTime.Now;
             string content = JsonConvert.SerializeObject(_context);
+            Debug.WriteLine(content);
             await File.WriteAllTextAsync(fileName, content);
             Debug.WriteLine(content);
         }

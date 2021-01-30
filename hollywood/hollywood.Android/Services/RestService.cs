@@ -33,6 +33,7 @@ namespace hollywood.Droid.Services
         {
             client = new HttpClient();
         }
+
         /// <summary>
         /// Gets menu from the server using REST API.
         /// Gets top level if handle is null otherwise gets the menu decribed by handle
@@ -83,13 +84,22 @@ namespace hollywood.Droid.Services
             return results;
         }
 
+
+        /// <summary>
+        /// Makes a post request to the server with a given sess id to check that:
+        ///     * The sess id is a valid Guid V4
+        ///     * The sess id belongs to a session that is in the database
+        ///     * The session identied has not been opened in the future and has not been closed
+        /// </summary>
+        /// <param name="sessId">The session id to check</param>
+        /// <returns>Whether the session id is valid</returns>
         public async Task<bool> ValidateSessId(string sessId) 
         {
             Uri uri = new Uri(Constants.RestUrl + "sessions/validate");
             bool result = false;
             try
             {
-                StringContent data = new StringContent(sessId);
+                StringContent data = new StringContent("sessId=" + sessId, Encoding.UTF8, "application/x-www-form-urlencoded");
                 HttpResponseMessage response = await client.PostAsync(uri, data);
                 // Could check body here but not necessary with current implementation.
                 if (response.IsSuccessStatusCode)

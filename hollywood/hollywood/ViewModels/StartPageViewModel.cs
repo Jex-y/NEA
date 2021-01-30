@@ -19,6 +19,7 @@ namespace hollywood.ViewModels
 
         public StartPageViewModel() 
         {
+            restService = DependencyService.Get<IRestService>();
             _startShellCommand = new Command(StartShell);
             _getSessIdCommand = new Command(async () => await GetSessId());
         }

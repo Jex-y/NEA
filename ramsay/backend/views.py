@@ -132,7 +132,7 @@ class SessionValidateView(APIView):
         valid = False
         msg = "Request format incorrect"
         requestStatus = status.HTTP_400_BAD_REQUEST
-        sessId = request.POST.get('sessid')
+        sessId = request.POST.get('sessId')
 
         if self.valid_uuidV4(sessId):
             try:
