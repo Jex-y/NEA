@@ -65,6 +65,22 @@ class ItemMenuListView(APIView):
         
         return Response(data)
 
+class ItemDetailView(APIView):
+
+    def get_objects(self, item_id):
+        try:
+            item = models.Item.objects.get(id=item_id)
+            return item
+        except Exception as e:
+            print(e)
+            raise Http404
+
+    def get(self, request, item_id, format=None):
+        item = self.get_objects(item_id)
+        serializer = serializers.ItemSerializer(item, context={'request': request})
+        return Response(serializer.data)
+
+
 class SessionCreateView(APIView):
 
     def post(self, request, format=None):

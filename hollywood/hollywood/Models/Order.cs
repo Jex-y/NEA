@@ -6,7 +6,6 @@ using System.Text;
 
 namespace hollywood.Models
 {
-    // TODO: Deal with order notes
     public class Order
     {
         public Order() 

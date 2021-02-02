@@ -2,11 +2,75 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="hollywood.Views.BasketPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="128" />
+        </Grid.RowDefinitions>
+
+        <CollectionView
+            ItemsSource="{Binding Items}"
+            Grid.RowSpan="2">
+
+            <CollectionView.EmptyView>
+                <StackLayout>
+                    <Label Text="Add some items to you basket to see them here!"
+                           TextColor="Black"
+                           VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+            
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="4,16,4,16"
+                                HeightRequest="64">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Source="{Binding ImageURI}"
+                            VerticalOptions="FillAndExpand" 
+                            Aspect="AspectFill"
+                            Opacity="0.80"
+                            Grid.RowSpan="2"
+                            Grid.Column="2"
+                            InputTransparent="True"/>
+
+                    <Label Text="{Binding Name}"
+                            FontAttributes="Bold"
+                            FontSize="Large"
+                            TextColor="Black"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            InputTransparent="True"/>
+
+                        <!--Call something to get the total price, e.g. passing the item to a function in the binding context
+                        Still need to acutaly bind the page.-->
+                            <Label Text="{Binding Price, StringFormat='{0:C}'}"
+                            FontSize="Body" 
+                            FontAttributes="Bold"
+                            TextColor="Black"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            InputTransparent="True"/>
+                        </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+         </CollectionView>
+
+        <Button Text="{Binding ButtonText}"
+                Command="{Binding ButtonCommand}"
+                VerticalOptions="End"
+                CornerRadius="64"
+                Grid.Row="1"
+                IsVisible="{Binding hasItems}"/>
+    </Grid>
 </ContentPage>

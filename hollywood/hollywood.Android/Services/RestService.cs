@@ -84,6 +84,28 @@ namespace hollywood.Droid.Services
             return results;
         }
 
+        public async Task<Item> GetItemDetail(Guid itemId) 
+        {
+            Uri uri = new Uri(Constants.RestUrl + "items/" + itemId.ToString());
+            Item result = null;
+            try
+            {
+                HttpResponseMessage response = client.GetAsync(uri).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = response.Content.ReadAsStringAsync().Result;
+                    result = JsonConvert.DeserializeObject<Item>(content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
+
+            return result;
+        }
+
 
         /// <summary>
         /// Makes a post request to the server with a given sess id to check that:

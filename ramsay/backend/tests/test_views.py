@@ -89,6 +89,32 @@ class ItemSearchViewTest(TestCase):
         json_data = json.loads(response.content)
         self.assertEqual(json_data, expected)
 
+class ItemDetailViewTest(TestCase):
+
+    def setUp(self):
+        self.item1 = Item.objects.create(
+            name='Apple', 
+            description='Some text', 
+            price=12.34)
+
+    def test_valid(self):
+        expected = {
+            'id': str(self.item1.id),
+            'name': 'Apple', 
+            'description': 'Some text', 
+            'price': '12.34',
+            'tags': [],
+            'image': None
+            }
+
+        response = self.client.get(
+            reverse('backend:itemdetail',
+            args=(self.item1.id,)))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_data = json.loads(response.content)
+        self.assertEqual(json_data, expected)
+
+
 class SessionCreateViewTest(TestCase):
 
     def setUp(self):

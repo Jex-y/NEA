@@ -14,11 +14,19 @@ namespace hollywood.ViewModels
     public class StartPageViewModel
     {
         readonly IRestService restService;
+        readonly IContextService contextService;
         readonly ICommand _getSessIdCommand;
         readonly ICommand _startShellCommand;
 
         public StartPageViewModel() 
         {
+            contextService = DependencyService.Get<IContextService>();
+
+            if (!(contextService.Context.CurrentSession is null))
+            {
+                StartShell();
+            }
+
             restService = DependencyService.Get<IRestService>();
             _startShellCommand = new Command(StartShell);
             _getSessIdCommand = new Command(async () => await GetSessId());
@@ -40,8 +48,8 @@ namespace hollywood.ViewModels
             string sessId = await qrScanner.readCode();
             if (await ValidateSessId(sessId))
             {
-                IContextService contextService = DependencyService.Get<IContextService>();
                 contextService.Context.CurrentSession = new Session { SessId = new Guid(sessId) };
+                StartShell();
             }
             else
             {
