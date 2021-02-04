@@ -45,7 +45,7 @@ class ItemMenuListView(APIView):
             return models.Menu.objects.filter(super_menu=None)
         except:
             raise Http404
-
+        
     def get(self, request, url_name=None, format=None):
         if url_name:
             items, menus = self.get_objects(url_name)
@@ -93,16 +93,16 @@ class SessionCreateView(APIView):
 
         if not table_num:
             data = {
-                "result":"Error: Parametrs not understood",
-                "sessid":None,
+                'result':'Error: Parametrs not understood',
+                'sessid':None,
                 }
 
             requestStatus = status.HTTP_400_BAD_REQUEST
 
         elif models.Session.objects.filter(table=table_num, end_time=None).count() > 0:
             data = {
-                "info":"Error: Open session already exsists for that table",
-                "sessid":None,
+                'info':'Error: Open session already exsists for that table',
+                'sessid':None,
                 }
 
             requestStatus = status.HTTP_409_CONFLICT
@@ -114,15 +114,15 @@ class SessionCreateView(APIView):
                 sess = models.Session.objects.create(table=table)
 
                 data = {
-                    "info":"Session created",
-                    "sessid":sess.sessId,
+                    'info':'Session created',
+                    'sessid':sess.sessId,
                     }
 
                 requestStatus = status.HTTP_201_CREATED
             except:
                 data = {
-                    "info":f"Error: table with number {table_num} does not exist",
-                    "sessid":None
+                    'info':f'Error: table with number {table_num} does not exist',
+                    'sessid':None
                     }
 
                 requestStatus = status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -146,7 +146,7 @@ class SessionValidateView(APIView):
         # TODO: Check tables aswell?
         
         valid = False
-        msg = "Request format incorrect"
+        msg = 'Request format incorrect'
         requestStatus = status.HTTP_400_BAD_REQUEST
         sessId = request.POST.get('sessId')
 
@@ -155,23 +155,66 @@ class SessionValidateView(APIView):
                 sess = models.Session.objects.get(sessId=sessId)
                 if sess.start_time <= timezone.now() and sess.end_time is None and not (sess.start_time <= timezone.now() - datetime.timedelta(hours=12)):
                     # Check that start time is before now, session has not been closed and the session has not been opened more than 12 hours ago
-                    msg = "Session valid"
+                    msg = 'Session valid'
                     valid = True
                     requestStatus = status.HTTP_200_OK
                 else:
-                    msg = "Session time invalid"
+                    msg = 'Session time invalid'
                     requestStatus = status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE
 
             except exceptions.ObjectDoesNotExist:
-                msg = f"No session with sessId={sessId} found in database"
+                msg = f'No session with sessId={sessId} found in database'
                 requestStatus = status.HTTP_404_NOT_FOUND
 
         data = {
-            "info": msg,
-            "valid":valid,
+            'info': msg,
+            'valid':valid,
             }
 
         return Response(data, requestStatus)
+
+class OrderCreateView(APIView):
+
+    def validate_json(self,json):
+        try:
+            sessid = json['sessId']
+            notes = json['order']['notes']
+            items = json['order']['items']
+            valid = True
+        except KeyError:
+            valid = False
+        return valid
+
+
+    def post(self, request, format=None):
+        json = request.data
+
+        requestStatus = status.HTTP_400_BAD_REQUEST
+
+        if self.validate_json(json):
+            try:
+                if len(json['order']['items']) == 0:
+                    requestStatus = status.HTTP_406_NOT_ACCEPTABLE
+
+                else:
+                    order = models.Order.objects.create(
+                        session=models.Session.objects.get(sessId=json['sessId']),
+                        notes=json['order']['notes'],
+                        )
+
+                    for item in json['order']['items']:
+                        num = json['order']['items'][item]
+                        itemOrder = models.ItemOrder.objects.create(
+                            order=order,
+                            item=models.Item.objects.get(id=item),
+                            quantity=num,
+                            )
+                    requestStatus = status.HTTP_204_NO_CONTENT
+
+            except (exceptions.ObjectDoesNotExist, exceptions.ValidationError):
+                requestStatus = status.HTTP_400_BAD_REQUEST
+
+        return Response(status=requestStatus)
 
         
 

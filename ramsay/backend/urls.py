@@ -8,5 +8,6 @@ urlpatterns = [
         path('items/search=<str:query>', ItemSearchView.as_view(), name='search'),
         path('items/<str:item_id>', ItemDetailView.as_view(), name='itemdetail'),
         path('sessions/new', SessionCreateView.as_view(), name='newsess'),
-        path('sessions/validate', SessionValidateView.as_view(), name="validsess")
+        path('sessions/validate', SessionValidateView.as_view(), name='validsess'),
+        path('orders/new', OrderCreateView.as_view(), name='neworder'),
     ]

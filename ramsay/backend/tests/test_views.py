@@ -308,3 +308,171 @@ class SessionValidateTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         json_data = json.loads(response.content)
         self.assertFalse(json_data['valid'])
+
+
+class OrderCreateTest(TestCase):
+
+    def setUp(self):
+        table1 = Table.objects.create(table_number=1)
+        self.sess = Session.objects.create(table=table1)
+
+
+        self.apple = Item.objects.create(
+            name='Apple', 
+            description='Some text', 
+            price=12.34)
+
+        self.bannana = Item.objects.create(
+            name='Bannan', 
+            description='This is a bannana', 
+            price=12.34)
+
+    def test_valid(self):
+        json_data = {
+                'sessId':str(self.sess.sessId),
+                'order': {
+                    'items': {
+                        str(self.apple.id): 4,
+                        str(self.bannana.id) : 3,
+                        },
+                    'notes': 'I would like the apple sliced please',
+                    },
+                }
+
+        response = self.client.post(reverse('backend:neworder'),json.dumps(json_data), content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        orders = Order.objects.filter(session=self.sess)
+
+        self.assertEqual(orders.count(), 1)
+
+        order = orders[0]
+
+        self.assertEqual(order.notes, json_data['order']['notes'])
+        self.assertEqual(order.items.count(), len(json_data['order']['items']))
+
+        self.assertEqual(order.items.all()[0], self.apple)
+        self.assertEqual(order.items.all()[1], self.bannana)
+        
+        self.assertEqual(ItemOrder.objects.all().count(), 2)
+
+        self.assertIn(
+                ItemOrder.objects.create(
+                order=order,
+                item=self.apple,
+                quantity=json_data['order']['items'][str(self.apple.id)]
+            ),
+            ItemOrder.objects.all())
+
+        self.assertIn(
+                ItemOrder.objects.create(
+                order=order,
+                item=self.bannana,
+                quantity=json_data['order']['items'][str(self.bannana.id)]
+            ),
+            ItemOrder.objects.all())
+
+    def test_empty_order(self):
+        json_data = {
+                'sessId':str(self.sess.sessId),
+                'order': {
+                    'items': {},
+                    'notes': 'I would like the apple sliced please',
+                    },
+                }
+
+        response = self.client.post(reverse('backend:neworder'),json.dumps(json_data), content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
+        orders = Order.objects.filter(session=self.sess)
+
+        self.assertEqual(orders.count(), 0)
+
+        self.assertEqual(ItemOrder.objects.all().count(), 0)
+
+    def test_invalid_json(self):
+        json_data = {
+                'key':'value',
+                'json_status': 'wrong',
+                }
+
+        response = self.client.post(reverse('backend:neworder'),json.dumps(json_data), content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        orders = Order.objects.filter(session=self.sess)
+
+        self.assertEqual(orders.count(), 0)
+
+        self.assertEqual(ItemOrder.objects.all().count(), 0)
+
+    def test_invalid_sessid(self):
+        json_data = {
+                'sessId':'abcd1234',
+                'order': {
+                    'items': {
+                        str(self.apple.id): 4,
+                        str(self.bannana.id) : 3,
+                        },
+                    'notes': 'I would like the apple sliced please',
+                    },
+                }
+
+        response = self.client.post(reverse('backend:neworder'),json.dumps(json_data), content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        orders = Order.objects.filter(session=self.sess)
+
+        self.assertEqual(orders.count(), 0)
+
+        self.assertEqual(ItemOrder.objects.all().count(), 0)
+
+    def test_null_notes(self):
+        json_data = {
+                'sessId':str(self.sess.sessId),
+                'order': {
+                    'items': {
+                        str(self.apple.id): 4,
+                        str(self.bannana.id) : 3,
+                        },
+                    'notes': None,
+                    },
+                }
+
+        response = self.client.post(reverse('backend:neworder'),json.dumps(json_data), content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        orders = Order.objects.filter(session=self.sess)
+
+        self.assertEqual(orders.count(), 1)
+
+        order = orders[0]
+
+        self.assertEqual(order.notes, json_data['order']['notes'])
+        self.assertEqual(order.items.count(), len(json_data['order']['items']))
+
+        self.assertEqual(order.items.all()[0], self.apple)
+        self.assertEqual(order.items.all()[1], self.bannana)
+        
+        self.assertEqual(ItemOrder.objects.all().count(), 2)
+
+        self.assertIn(
+                ItemOrder.objects.create(
+                order=order,
+                item=self.apple,
+                quantity=json_data['order']['items'][str(self.apple.id)]
+            ),
+            ItemOrder.objects.all())
+
+        self.assertIn(
+                ItemOrder.objects.create(
+                order=order,
+                item=self.bannana,
+                quantity=json_data['order']['items'][str(self.bannana.id)]
+            ),
+            ItemOrder.objects.all())
+        
