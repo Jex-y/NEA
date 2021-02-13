@@ -84,6 +84,33 @@ namespace hollywood.Droid.Services
             return results;
         }
 
+        public async Task<ObservableCollection<Item>> GetFilterResults(ObservableCollection<Tag> tags) 
+        {
+            string query = tags.First().ToString();
+            foreach (Tag tag in tags.Skip(1)) 
+            {
+                query += '&' + tag.ToString();
+            }
+            Uri uri = new Uri(Constants.RestUrl + "items/filter/tags=" + query);
+            ObservableCollection<Item> results = null;
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(uri);
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    results = JsonConvert.DeserializeObject<ObservableCollection<Item>>(content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
+
+            return results;
+        }
+
         public async Task<Item> GetItemDetail(Guid itemId) 
         {
             Uri uri = new Uri(Constants.RestUrl + "items/" + itemId.ToString());
@@ -122,6 +149,35 @@ namespace hollywood.Droid.Services
             try
             {
                 StringContent data = new StringContent("sessId=" + sessId, Encoding.UTF8, "application/x-www-form-urlencoded");
+                HttpResponseMessage response = await client.PostAsync(uri, data);
+                // Could check body here but not necessary with current implementation.
+                if (response.IsSuccessStatusCode)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
+
+            return result;
+        }
+
+        public async Task<bool> SubmitOrder(Order order, Session sess) 
+        {
+            Uri uri = new Uri(Constants.RestUrl + "orders/new");
+            bool result = false;
+            try
+            {
+                var jsonData = new
+                {
+                    order = order,
+                    sessId = sess.SessId
+                };
+
+                StringContent data = new StringContent(JsonConvert.SerializeObject(jsonData), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(uri, data);
                 // Could check body here but not necessary with current implementation.
                 if (response.IsSuccessStatusCode)
