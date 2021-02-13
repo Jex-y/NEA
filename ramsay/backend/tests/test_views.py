@@ -37,14 +37,11 @@ class ItemSearchViewTest(APITestCase):
             price=12.34)
 
     def test_full_name_search(self):
-        expected = [{
-            'id': str(self.apple.id),
-            'name': 'Apple', 
-            'description': 'Some text', 
-            'price': '12.34', 
-            'tags': [],
-            'image': None
-            }]
+        expected = ItemSerializer(
+            [
+                self.apple,
+            ], 
+            many=True).data
 
         response = self.client.get(reverse('backend:search',args=('apple',)))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -52,14 +49,11 @@ class ItemSearchViewTest(APITestCase):
         self.assertEqual(json_data, expected)
 
     def test_partial_name_search(self):
-        expected = [{
-            'id': str(self.apple.id),
-            'name': 'Apple', 
-            'description': 'Some text', 
-            'price': '12.34', 
-            'tags': [],
-            'image': None
-            }]
+        expected = ItemSerializer(
+            [
+                self.apple,
+            ], 
+            many=True).data
 
         response = self.client.get(reverse('backend:search',args=('ap',)))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -67,14 +61,11 @@ class ItemSearchViewTest(APITestCase):
         self.assertEqual(json_data, expected)
 
     def test_full_description_search(self):
-        expected = [{
-            'id': str(self.bannana.id),
-            'name': 'A name', 
-            'description': 'This is a bannana', 
-            'price': '12.34',
-            'tags': [],
-            'image': None
-            }]
+        expected = ItemSerializer(
+            [
+                self.bannana,
+            ], 
+            many=True).data
 
         response = self.client.get(reverse('backend:search',args=('This is a bannana',)))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -82,14 +73,11 @@ class ItemSearchViewTest(APITestCase):
         self.assertEqual(json_data, expected)
 
     def test_partial_description_search(self):
-        expected = [{
-            'id': str(self.bannana.id),
-            'name': 'A name', 
-            'description': 'This is a bannana', 
-            'price': '12.34',
-            'tags': [],
-            'image': None
-            }]
+        expected = ItemSerializer(
+            [
+                self.bannana,
+            ], 
+            many=True).data
 
         response = self.client.get(reverse('backend:search',args=('ba',)))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -103,6 +91,7 @@ class ItemSearchViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json_data = json.loads(response.content)
         self.assertEqual(json_data, expected)
+
 
 class ItemFilterViewTest(APITestCase):
     def setUp(self):
@@ -231,14 +220,7 @@ class ItemDetailViewTest(APITestCase):
             price=12.34)
 
     def test_valid(self):
-        expected = {
-            'id': str(self.item1.id),
-            'name': 'Apple', 
-            'description': 'Some text', 
-            'price': '12.34',
-            'tags': [],
-            'image': None
-            }
+        expected = ItemSerializer(self.item1).data
 
         response = self.client.get(
             reverse('backend:itemdetail',
