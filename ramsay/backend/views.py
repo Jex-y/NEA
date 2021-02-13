@@ -25,6 +25,26 @@ class ItemSearchView(APIView):
         serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
         return Response(serializer.data)
 
+class ItemFilterView(APIView):
+
+    def get_objects(self, tags):
+        try:
+            query = Q()
+            # Returns matches for any of the tags
+            for tag in tags:
+                query = query | Q(tags__id=tag)
+
+            itemSet = set(models.Item.objects.filter(query))
+            # Set removes duplicates
+            return itemSet
+        except:
+            raise Http404 # Something was wrong with the query
+
+    def get(self, request, tags=None, format=None):
+        items = self.get_objects(tags.split('&'))
+        serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
+        return Response(serializer.data)
+
 class ItemMenuListView(APIView):
 
     def get_objects(self, url_name):
@@ -34,8 +54,8 @@ class ItemMenuListView(APIView):
             submenu_queryset = models.Menu.objects.none()
             for menu in menus:
                 if menu.check_available():
-                    item_queryset = item_queryset.union(menu.items.filter(available=True))
-                    submenu_queryset = submenu_queryset.union(models.Menu.objects.filter(super_menu=menu))
+                    item_queryset |= menu.items.filter(available=True)
+                    submenu_queryset |= models.Menu.objects.filter(super_menu=menu)
             return item_queryset, submenu_queryset
         except Exception as e:
             raise Http404

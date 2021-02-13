@@ -1,13 +1,29 @@
 import django
 from django.urls import reverse
-from django.test import TestCase
+from rest_framework.test import APIClient, APITestCase
 from django.utils import timezone
 from rest_framework import status
 from backend.models import *
+from backend.serializers import *
 import json
 import datetime
 
-class ItemSearchViewTest(TestCase):
+def checkJsonEqual(a, b):
+    # Only needs to be used when the order of items may not be the same
+    a = orderJson(a)
+    b = orderJson(b)
+
+    return a == b
+
+def orderJson(data):
+    if isinstance(data, dict):
+        return sorted((key, orderJson(value)) for key, value in data.items())
+    elif isinstance(data, list):
+        return sorted(orderJson(x) for x in data)
+    else:
+        return data
+
+class ItemSearchViewTest(APITestCase):
 
     def setUp(self):
         self.apple = Item.objects.create(
@@ -22,7 +38,6 @@ class ItemSearchViewTest(TestCase):
 
     def test_full_name_search(self):
         expected = [{
-
             'id': str(self.apple.id),
             'name': 'Apple', 
             'description': 'Some text', 
@@ -89,7 +104,125 @@ class ItemSearchViewTest(TestCase):
         json_data = json.loads(response.content)
         self.assertEqual(json_data, expected)
 
-class ItemDetailViewTest(TestCase):
+class ItemFilterViewTest(APITestCase):
+    def setUp(self):
+        self.tag1 = Tag.objects.create(name='tag1')
+        self.tag2 = Tag.objects.create(name='tag2')
+        self.tag3 = Tag.objects.create(name='tag3')
+
+        self.apple = Item.objects.create(
+            name='Apple', 
+            description='Some text', 
+            price=12.34)
+
+        self.apple.tags.set([self.tag1, self.tag2])
+
+        self.bannana = Item.objects.create(
+            name='A name', 
+            description='This is a bannana', 
+            price=12.34)
+
+        self.bannana.tags.set([self.tag1])
+
+        self.coffee = Item.objects.create(
+            name='Black coffee', 
+            description='I need some of this right now it is like 2 AM and I am writing unit tests', 
+            price=0.12)
+
+    def test_one_tag_two_results(self):
+        expected = ItemSerializer(
+            [
+                self.apple,
+                self.bannana,
+            ], 
+            many=True).data
+        
+        tags = str(self.tag1.id)
+
+        response = self.client.get(
+            reverse('backend:filter', 
+                args=(tags,)))
+        
+        self.assertTrue(
+            checkJsonEqual(
+                json.loads(response.content), 
+                expected
+            ))
+
+    def test_one_tag_one_result(self):
+        expected = ItemSerializer(
+            [self.apple], 
+            many=True).data
+        
+        tags = str(self.tag2.id)
+
+        response = self.client.get(
+            reverse('backend:filter', 
+                args=(tags,)))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            json.loads(response.content), 
+            expected)
+
+    def test_two_tags(self):
+        expected = ItemSerializer(
+            [
+                self.apple,
+                self.bannana,
+            ], 
+            many=True).data
+        
+        tags = str(self.tag1.id) + '&' + str(self.tag2.id)
+
+        response = self.client.get(
+            reverse('backend:filter', 
+                args=(tags,)))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(
+            checkJsonEqual(
+                json.loads(response.content), 
+                expected
+            ))
+
+    def test_no_results(self):
+        expected = ItemSerializer(
+            [], 
+            many=True).data
+        
+        tags = str(self.tag3.id)
+
+        response = self.client.get(
+            reverse('backend:filter', 
+                args=(tags,)))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            json.loads(response.content), 
+            expected)
+
+
+    def test_empty_request(self):
+        tags = ' '
+
+        response = self.client.get(
+            reverse('backend:filter', 
+                args=(tags,)))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_invalid_request(self):
+        tags = str(self.tag1.id) + '&' + str(self.tag2.id) + '&abcd1234' 
+        
+        response = self.client.get(
+            reverse('backend:filter', 
+                args=(tags,)))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        
+
+class ItemDetailViewTest(APITestCase):
 
     def setUp(self):
         self.item1 = Item.objects.create(
@@ -115,7 +248,7 @@ class ItemDetailViewTest(TestCase):
         self.assertEqual(json_data, expected)
 
 
-class SessionCreateViewTest(TestCase):
+class SessionCreateViewTest(APITestCase):
 
     def setUp(self):
         self.table1 = Table.objects.create(table_number=1)
@@ -203,7 +336,7 @@ class SessionCreateViewTest(TestCase):
         self.assertQuerysetEqual(before_item_set, after_item_set)
 
 
-class SessionValidateTest(TestCase):
+class SessionValidateTest(APITestCase):
 
     def setUp(self):
         table1 = Table.objects.create(table_number=1)
@@ -310,7 +443,7 @@ class SessionValidateTest(TestCase):
         self.assertFalse(json_data['valid'])
 
 
-class OrderCreateTest(TestCase):
+class OrderCreateTest(APITestCase):
 
     def setUp(self):
         table1 = Table.objects.create(table_number=1)
