@@ -20,7 +20,7 @@ class ItemSearchView(APIView):
         except:
             raise Http404
 
-    def get(self, request, query, format=None):
+    def get(self, request, query):
         items = self.get_objects(query)
         serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
         return Response(serializer.data)
@@ -40,7 +40,7 @@ class ItemFilterView(APIView):
         except:
             raise Http404 # Something was wrong with the query
 
-    def get(self, request, tags=None, format=None):
+    def get(self, request, tags=None):
         items = self.get_objects(tags.split('&'))
         serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
         return Response(serializer.data)
@@ -66,7 +66,7 @@ class ItemMenuListView(APIView):
         except:
             raise Http404
         
-    def get(self, request, url_name=None, format=None):
+    def get(self, request, url_name=None):
         if url_name:
             items, menus = self.get_objects(url_name)
             item_serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
@@ -92,18 +92,16 @@ class ItemDetailView(APIView):
             item = models.Item.objects.get(id=item_id)
             return item
         except Exception as e:
-            print(e)
             raise Http404
 
-    def get(self, request, item_id, format=None):
+    def get(self, request, item_id):
         item = self.get_objects(item_id)
         serializer = serializers.ItemSerializer(item, context={'request': request})
         return Response(serializer.data)
 
-
 class SessionCreateView(APIView):
 
-    def post(self, request, format=None):
+    def post(self, request):
         table_num = request.POST.get('table_num')
 
         try:
@@ -149,7 +147,6 @@ class SessionCreateView(APIView):
 
         return Response(data, requestStatus)
 
-
 class SessionValidateView(APIView):
 
     def valid_uuidV4(self, value):
@@ -162,7 +159,7 @@ class SessionValidateView(APIView):
             result = False
         return result
     
-    def post(self, request, format=None):
+    def post(self, request):
         # TODO: Check tables aswell?
         
         valid = False
@@ -206,7 +203,7 @@ class OrderCreateView(APIView):
         return valid
 
 
-    def post(self, request, format=None):
+    def post(self, request):
         json = request.data
 
         requestStatus = status.HTTP_400_BAD_REQUEST
@@ -236,7 +233,19 @@ class OrderCreateView(APIView):
 
         return Response(status=requestStatus)
 
-        
+class TagListView(APIView):
+    
+    def get_objects(self):
+        try:
+            tags = models.Tag.objects.all()
+            # TODO: Could fliter by if referenced by any items
+            return tags
+        except:
+            raise Http404
 
+    def get(self, request):
+        tags = self.get_objects()
+        serializer = serializers.TagSerializer(tags, many=True, context={'request': request})
+        return Response(serializer.data)
 
                

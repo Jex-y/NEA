@@ -611,3 +611,22 @@ class OrderCreateTest(APITestCase):
             ),
             ItemOrder.objects.all())
         
+
+class TagListViewTest(APITestCase):
+    def setUp(self):
+        self.tag1 = Tag.objects.create(name='tag1')
+        self.tag2 = Tag.objects.create(name='tag2') 
+
+    def test_view(self):
+        expected = TagSerializer(
+            [
+                self.tag1, 
+                self.tag2,
+            ], 
+            many=True).data
+
+        response = self.client.get(reverse('backend:tags'))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_data = json.loads(response.content)
+        self.assertEqual(json_data, expected)
