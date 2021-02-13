@@ -225,9 +225,29 @@ class ItemDetailViewTest(APITestCase):
         response = self.client.get(
             reverse('backend:itemdetail',
             args=(self.item1.id,)))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json_data = json.loads(response.content)
         self.assertEqual(json_data, expected)
+
+    def test_invalid_id(self):
+        response = self.client.get(
+            reverse('backend:itemdetail',
+            args=('abc123',)))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_noexsistent_item(self):
+        test_uuid = uuid.uuid4()
+
+        while Item.objects.filter(id = test_uuid).count() > 0:
+            test_uuid = uuid.uuid4()
+
+        response = self.client.get(
+            reverse('backend:itemdetail',
+            args=(test_uuid,)))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class SessionCreateViewTest(APITestCase):
