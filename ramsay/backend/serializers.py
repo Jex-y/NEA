@@ -18,3 +18,8 @@ class MenuSerializer(serializers.ModelSerializer):
         model = Menu
         fields = ('name', 'url_name', 'description', 'image')
 
+class ItemOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemOrder
+        fields = ('item', 'quantity', 'notes', 'completed')
+

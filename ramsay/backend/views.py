@@ -195,7 +195,6 @@ class OrderCreateView(APIView):
     def validate_json(self,json):
         try:
             sessid = json['sessId']
-            notes = json['order']['notes']
             items = json['order']['items']
             valid = True
         except KeyError:
@@ -215,16 +214,16 @@ class OrderCreateView(APIView):
 
                 else:
                     order = models.Order.objects.create(
-                        session=models.Session.objects.get(sessId=json['sessId']),
-                        notes=json['order']['notes'],
-                        )
+                        session=models.Session.objects.get(sessId=json['sessId']))
 
                     for item in json['order']['items']:
-                        num = json['order']['items'][item]
+                        num = json['order']['items'][item]['num']
+                        notes = json['order']['items'][item]['notes']
                         itemOrder = models.ItemOrder.objects.create(
                             order=order,
                             item=models.Item.objects.get(id=item),
                             quantity=num,
+                            notes=notes,
                             )
                     requestStatus = status.HTTP_204_NO_CONTENT
 
@@ -247,5 +246,13 @@ class TagListView(APIView):
         tags = self.get_objects()
         serializer = serializers.TagSerializer(tags, many=True, context={'request': request})
         return Response(serializer.data)
+
+class ItemOrderListView(APIView):
+    def get_objects(self):
+        itemOrders = models.ItemOrder.objects.filter(completed=False).order_by('order__submitted')
+        return itemOrders
+
+    def get(self):
+        pass
 
                

@@ -467,10 +467,15 @@ class OrderCreateTest(APITestCase):
                 'sessId':str(self.sess.sessId),
                 'order': {
                     'items': {
-                        str(self.apple.id): 4,
-                        str(self.bannana.id) : 3,
+                        str(self.apple.id): {
+                            'num':4,
+                            'notes':'Sliced Please'
+                            },
+                        str(self.bannana.id) : {
+                            'num':4,
+                            'notes':None,
+                            }
                         },
-                    'notes': 'I would like the apple sliced please',
                     },
                 }
 
@@ -484,7 +489,6 @@ class OrderCreateTest(APITestCase):
 
         order = orders[0]
 
-        self.assertEqual(order.notes, json_data['order']['notes'])
         self.assertEqual(order.items.count(), len(json_data['order']['items']))
 
         self.assertEqual(order.items.all()[0], self.apple)
@@ -492,29 +496,23 @@ class OrderCreateTest(APITestCase):
         
         self.assertEqual(ItemOrder.objects.all().count(), 2)
 
-        self.assertIn(
-                ItemOrder.objects.create(
-                order=order,
-                item=self.apple,
-                quantity=json_data['order']['items'][str(self.apple.id)]
-            ),
-            ItemOrder.objects.all())
+        appleItemOrder = ItemOrder.objects.get(order=order, item=self.apple)
+        self.assertEqual(appleItemOrder.quantity, 
+                         json_data['order']['items'][str(self.apple.id)]['num'])
+        self.assertEqual(appleItemOrder.notes, 
+                         json_data['order']['items'][str(self.apple.id)]['notes'])
 
-        self.assertIn(
-                ItemOrder.objects.create(
-                order=order,
-                item=self.bannana,
-                quantity=json_data['order']['items'][str(self.bannana.id)]
-            ),
-            ItemOrder.objects.all())
+        bannanaItemOrder = ItemOrder.objects.get(order=order, item=self.bannana)
+        self.assertEqual(bannanaItemOrder.quantity, 
+                         json_data['order']['items'][str(self.bannana.id)]['num'])
+        self.assertEqual(bannanaItemOrder.notes, 
+                         json_data['order']['items'][str(self.bannana.id)]['notes'])
 
     def test_empty_order(self):
         json_data = {
                 'sessId':str(self.sess.sessId),
                 'order': {
-                    'items': {},
-                    'notes': 'I would like the apple sliced please',
-                    },
+                    'items': {}},
                 }
 
         response = self.client.post(reverse('backend:neworder'),json.dumps(json_data), content_type='application/json')
@@ -548,10 +546,15 @@ class OrderCreateTest(APITestCase):
                 'sessId':'abcd1234',
                 'order': {
                     'items': {
-                        str(self.apple.id): 4,
-                        str(self.bannana.id) : 3,
+                        str(self.apple.id): {
+                            'num':4,
+                            'notes':'Sliced Please'
+                            },
+                        str(self.bannana.id) : {
+                            'num':4,
+                            'notes':None,
+                            }
                         },
-                    'notes': 'I would like the apple sliced please',
                     },
                 }
 
@@ -564,52 +567,6 @@ class OrderCreateTest(APITestCase):
         self.assertEqual(orders.count(), 0)
 
         self.assertEqual(ItemOrder.objects.all().count(), 0)
-
-    def test_null_notes(self):
-        json_data = {
-                'sessId':str(self.sess.sessId),
-                'order': {
-                    'items': {
-                        str(self.apple.id): 4,
-                        str(self.bannana.id) : 3,
-                        },
-                    'notes': None,
-                    },
-                }
-
-        response = self.client.post(reverse('backend:neworder'),json.dumps(json_data), content_type='application/json')
-
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        orders = Order.objects.filter(session=self.sess)
-
-        self.assertEqual(orders.count(), 1)
-
-        order = orders[0]
-
-        self.assertEqual(order.notes, json_data['order']['notes'])
-        self.assertEqual(order.items.count(), len(json_data['order']['items']))
-
-        self.assertEqual(order.items.all()[0], self.apple)
-        self.assertEqual(order.items.all()[1], self.bannana)
-        
-        self.assertEqual(ItemOrder.objects.all().count(), 2)
-
-        self.assertIn(
-                ItemOrder.objects.create(
-                order=order,
-                item=self.apple,
-                quantity=json_data['order']['items'][str(self.apple.id)]
-            ),
-            ItemOrder.objects.all())
-
-        self.assertIn(
-                ItemOrder.objects.create(
-                order=order,
-                item=self.bannana,
-                quantity=json_data['order']['items'][str(self.bannana.id)]
-            ),
-            ItemOrder.objects.all())
         
 
 class TagListViewTest(APITestCase):
