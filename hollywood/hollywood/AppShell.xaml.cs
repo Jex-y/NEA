@@ -11,7 +11,8 @@ namespace hollywood
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute(nameof(MenuPage), typeof(MenuPage));
+            //Routing.RegisterRoute(nameof(MenuPage), typeof(MenuPage));
+
             tab.CurrentItem = MenuPageTab;
         }
 

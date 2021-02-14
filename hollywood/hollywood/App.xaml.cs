@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using hollywood.Models;
+using hollywood.Views;
 
 namespace hollywood
 {
@@ -13,22 +14,22 @@ namespace hollywood
             
             InitializeComponent();
 
-            MainPage = new AppShell();
+            MainPage = new StartPage();
         }
 
         protected override void OnStart()
         {
-            ctx = new Context(); // TODO: Check if there is a file already.
+            
         }
 
         protected override void OnSleep()
         {
-            // TODO: Save context
+            
         }
 
         protected override void OnResume()
         {
-            // Context should persist?
+
         }
     }
 }

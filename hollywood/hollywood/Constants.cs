@@ -9,7 +9,7 @@ namespace hollywood
         // REST server URL
         public static string RestUrl = "http://192.168.0.24:8000/api/";
 
-        // Currency units
-        public static string currency = "£";
+        // Max age of sessions on device in hours
+        public static int MaxAge = 12;
     }
 }

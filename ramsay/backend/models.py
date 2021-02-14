@@ -22,7 +22,16 @@ def get_upload_name(dir, instance, filename):
                 (str): relative filepath to save the icon image
 
         """
-        return "images/{}/{}.{}".format(dir,instance.pk,filename.split('.')[-1])
+        return 'images/{}/{}.{}'.format(dir,instance.pk,filename.split('.')[-1])
+
+def get_upload_name_tag(instance, filename):
+    return get_upload_name('tags',instancem,filename)
+
+def get_upload_name_item(instance, filename):
+    return get_upload_name('items',instancem,filename)
+
+def get_upload_name_menu(instance, filename):
+    return get_upload_name('menus',instancem,filename)
 
 class Tag(models.Model):
     """
@@ -32,7 +41,7 @@ class Tag(models.Model):
     Optionally has an icon that is shown next to the item on the menu.
     ...
 
-    Attributes
+    Attributes+-
     --------
     id : UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
         primary key for database
@@ -52,7 +61,7 @@ class Tag(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     name = models.CharField(max_length=32)
     icon = models.ImageField(
-        upload_to=lambda instance, filename: get_upload_name("tags", instance, filename),
+        upload_to=get_upload_name_tag,
         blank=True, null=True)
 
     def __str__(self):
@@ -107,7 +116,7 @@ class Item(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
     available = models.BooleanField(default=True)
     image = models.ImageField(
-        upload_to=lambda instance, filename: get_upload_name("items", instance, filename),
+        upload_to=get_upload_name_item,
         blank=True, null=True)
 
     def __str__(self):
@@ -187,19 +196,19 @@ class Menu(models.Model):
     available = models.BooleanField(default=True)
     url_name = models.SlugField(max_length=64, editable=False)
     image = models.ImageField(
-        upload_to=lambda instance, filename: get_upload_name("menus", instance, filename),
+        upload_to=get_upload_name_menu,
         blank=True, null=True)
 
     objects = managers.MenuManager()
 
     day_choices = [
-            (0, "Monday"),
-            (1, "Tuesday"),
-            (2, "Wednesday"),
-            (3, "Thursday"),
-            (4, "Friday"),
-            (5, "Saturday"),
-            (6, "Sunday"),
+            (0, 'Monday'),
+            (1, 'Tuesday'),
+            (2, 'Wednesday'),
+            (3, 'Thursday'),
+            (4, 'Friday'),
+            (5, 'Saturday'),
+            (6, 'Sunday'),
         ]
 
     start_time = models.TimeField(null=True, blank=True)
@@ -323,7 +332,7 @@ class Table(models.Model):
             (str): human readable string representing the table
 
         """
-        return f"Table {self.table_number}"
+        return f'Table {self.table_number}'
 
 class Session(models.Model):
     """
@@ -348,7 +357,7 @@ class Session(models.Model):
     """
     sessId = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     table = models.ForeignKey(Table, on_delete=models.PROTECT)
-    start_time = models.DateTimeField(null=True, blank=True)
+    start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(null=True, blank=True)
 
             
@@ -363,8 +372,8 @@ class Order(models.Model):
         foreign key to the session that the order is assosiated with
     items : ManyToManyField(
         Item,
-        through="ItemOrder",
-        through_fields=("order", "item")
+        through='ItemOrder',
+        through_fields=('order', 'item')
     )
         the items assoiated with the order
         many to many through ItemOrder so that each item can have an assosiated quantity and notes
@@ -377,9 +386,10 @@ class Order(models.Model):
     session = models.ForeignKey(Session, on_delete=models.PROTECT)
     items = models.ManyToManyField(
         Item,
-        through="ItemOrder",
-        through_fields=("order", "item")
+        through='ItemOrder',
+        through_fields=('order', 'item'),
     )
+    notes = models.CharField(max_length=256, blank=True, null=True)
 
 class ItemOrder(models.Model):
     """
@@ -404,8 +414,7 @@ class ItemOrder(models.Model):
     None
 
     """
-    order = models.ForeignKey(Order, on_delete=models.PROTECT)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     quantity = models.IntegerField()
-    notes = models.CharField(max_length=256, blank=True, null=True)
 

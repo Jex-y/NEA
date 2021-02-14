@@ -9,12 +9,16 @@ namespace hollywood.Models
     {
         public Context() 
         {
-            Basket = new Order();
+            LastModified = DateTime.Now;
         }
+
         [JsonProperty("basket")]
         public Order Basket {get; set;}
 
         [JsonProperty("session")]
         public Session CurrentSession { get; set; }
+
+        [JsonProperty("lastModifed")]
+        public DateTime LastModified { get; set; }
     }
 }

@@ -19,12 +19,15 @@ class TagsAdmin(admin.ModelAdmin):
 class TableAdmin(admin.ModelAdmin):
     pass
 
+@admin.register(Session)
+class SessionAdmin(admin.ModelAdmin):
+    pass
+
+class ItemOrderInline(admin.TabularInline):
+    model = Order.items.through
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ItemOrder)
-class ItemOrderAdmin(admin.ModelAdmin):
-    pass
-
+    inlines = [
+        ItemOrderInline
+    ]

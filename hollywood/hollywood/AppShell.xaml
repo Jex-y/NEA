@@ -38,6 +38,9 @@
         </Tab>
         <Tab Title="Basket"
              Icon="xamarin_logo.png">
+            <ShellContent x:Name="BasketPageTab">
+                <views:BasketPage/>
+            </ShellContent>
             
         </Tab>
     </TabBar>
