@@ -9,6 +9,7 @@ using Xamarin.Forms;
 using hollywood.Views;
 using Rg.Plugins.Popup.Extensions;
 using System.Threading.Tasks;
+using hollywood.Services;
 
 namespace hollywood.Models
 {
@@ -28,10 +29,25 @@ namespace hollywood.Models
         public Uri ImageURI { get; set; }
 
         readonly ICommand _tapCommand;
+        readonly ICommand _addNotesCommand;
 
         public Item()
         {
             _tapCommand = new Command(async() => await OnTapped());
+            _addNotesCommand = new Command(async () => await OnAddNotes());
+        }
+
+        public decimal TotalPrice 
+        {
+            get 
+            {
+                ItemOrder thisItemOrder = getItemOrder();
+                if (!(thisItemOrder is null))
+                {
+                    return thisItemOrder.num * Price;
+                }
+                return 0;
+            }
         }
 
         public ICommand TapCommand 
@@ -39,9 +55,32 @@ namespace hollywood.Models
             get { return _tapCommand; }
         }
 
+        public ICommand AddNotesCommand 
+        {
+            get { return _addNotesCommand; }
+        }
+
         async Task OnTapped()
         {
             await App.Current.MainPage.Navigation.PushPopupAsync(new ItemPopupPage(this));
+        }
+
+        async Task OnAddNotes() 
+        {
+            
+        }
+
+
+
+        ItemOrder getItemOrder() 
+        {
+            IContextService contextService = DependencyService.Get<IContextService>();
+            ItemOrder result = null;
+            if (contextService.Context.Basket.Items.ContainsKey(ID)) 
+            {
+                result = contextService.Context.Basket.Items[ID];
+            }
+            return result;
         }
     }
 }

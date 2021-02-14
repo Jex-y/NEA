@@ -1,12 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="hollywood.Views.ItemPopupPage"
-             xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
-             xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
-             xmlns:controls="clr-namespace:hollywood.Controls;assembly=hollywood">
-    
-    <!--https://docs.microsoft.com/en-us/answers/questions/221603/xamarin-forms-popup-from-bottom-of-screen.html-->
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 x:Class="hollywood.Views.FilterPage"
+                 xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                 xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+                 xmlns:controls="clr-namespace:hollywood.Controls;assembly=hollywood">
 
     <pages:PopupPage.Animation>
         <animations:ScaleAnimation 
@@ -19,7 +17,7 @@
             EasingOut="SinIn"
             HasBackgroundAnimation="True"/>
     </pages:PopupPage.Animation>
-    
+
     <StackLayout 
         VerticalOptions="EndAndExpand" 
         HorizontalOptions="FillAndExpand" 
@@ -27,13 +25,15 @@
         <controls:CornerRadiusFrame CornerRadius="20,20,0,0"  
                                     HorizontalOptions="FillAndExpand" 
                                     HeightRequest="200" >
-            
+
             <StackLayout Margin="20,20,20,20"
                          HeightRequest="180">
 
                 <Label Text="{Binding Item.Name}"
                        FontAttributes="Bold"
                        TextColor="Black"/>
+
+                
 
                 <Label Text="{Binding Item.Description}"
                        TextColor="Black"/>
@@ -77,4 +77,4 @@
         </controls:CornerRadiusFrame>
 
     </StackLayout>
-</pages:PopupPage>
+    </pages:PopupPage>
