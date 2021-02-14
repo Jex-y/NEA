@@ -193,6 +193,28 @@ namespace hollywood.Droid.Services
 
             return result;
         }
+
+        public async Task<ObservableCollection<Tag>> GetAvailableTags() 
+        {
+            Uri uri = new Uri(Constants.RestUrl + "tags/");
+            ObservableCollection<Tag> results = null;
+            try
+            {
+                HttpResponseMessage response = client.GetAsync(uri).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = response.Content.ReadAsStringAsync().Result;
+                    results = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
+
+            return results;
+        }
         async Task WarnUserCannotConnect() 
         {
             NetworkAccess networkState = Connectivity.NetworkAccess;
@@ -222,5 +244,6 @@ namespace hollywood.Droid.Services
             }
             alert.Show();
         }
+
     }
 }
