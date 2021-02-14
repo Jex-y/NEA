@@ -7,6 +7,7 @@ using System.Diagnostics;
 using Xamarin.Forms;
 using hollywood.Services;
 using hollywood.Models;
+using hollywood.Views;
 using System.Collections.ObjectModel;
 
 namespace hollywood.ViewModels
@@ -21,13 +22,15 @@ namespace hollywood.ViewModels
         readonly string _submitOrderText = "Order";
         readonly string _getSessIdText = "Scan code";
         ObservableCollection<Item> _items;
+        bool _canOrder;
+        bool _hasItems;
 
         public BasketPageViewModel() 
         {
             contextService = DependencyService.Get<IContextService>();
             restService = DependencyService.Get<IRestService>();
             Items = new ObservableCollection<Item>();
-
+               
             Debug.WriteLine("Got here");
 
             UpdateItems();
@@ -38,12 +41,12 @@ namespace hollywood.ViewModels
 
         public ICommand ButtonCommand 
         {
-            get { return canOrder ? _submitOrderCommand : _getSessIdCommand; }
+            get { return CanOrder ? _submitOrderCommand : _getSessIdCommand; }
         }
 
         public string ButtonText 
         {
-            get { return canOrder ? _submitOrderText : _getSessIdText; }
+            get { return CanOrder ? _submitOrderText : _getSessIdText; }
         }
 
         public ObservableCollection<Item> Items 
@@ -52,13 +55,12 @@ namespace hollywood.ViewModels
             set { SetProperty(ref _items, value); }
         }
 
-        bool canOrder 
+        public bool CanOrder 
         {
-            get { return !(contextService.Context.CurrentSession is null) && hasItems; }
+            get { return !(contextService.Context.CurrentSession is null) && HasItems; }
         }
 
-        // Button dissapears if basket empty.
-        bool hasItems
+        public bool HasItems 
         {
             get { return !(contextService.Context.Basket.Items.Count == 0); }
         }
@@ -80,7 +82,15 @@ namespace hollywood.ViewModels
 
         async Task SubmitOrder() 
         {
-
+            if (await restService.SubmitOrder(contextService.Context.Basket, contextService.Context.CurrentSession))
+            {
+                contextService.Context.Basket = new Order();
+                UpdateItems();
+            }
+            else
+            {
+                Debug.WriteLine("Could not submit order");
+            }
         }
 
         async Task<bool> ValidateSessId(string sessId)
@@ -92,15 +102,23 @@ namespace hollywood.ViewModels
         {
             bool startEmpty = Items.Count == 0;
             int i = 0;
-            foreach (Guid itemId in contextService.Context.Basket.Items.Keys) 
+            if (contextService.Context.Basket.Items.Count == 0)
             {
-                if (startEmpty) 
-                {
-                    _items.Add(null);
-                }
-                GetItem(itemId, i);
-                i++;
+                Items = new ObservableCollection<Item>();
             }
+            else 
+            {
+                foreach (Guid itemId in contextService.Context.Basket.Items.Keys)
+                {
+                    if (startEmpty)
+                    {
+                        _items.Add(null);
+                    }
+                    GetItem(itemId, i);
+                    i++;
+                }
+            }
+            
         }
 
         async Task GetItem(Guid itemId, int index) 
@@ -108,6 +126,5 @@ namespace hollywood.ViewModels
             Items.Insert(index, restService.GetItemDetail(itemId).Result);
         }
 
-        
     }
 }

@@ -14,7 +14,7 @@ namespace hollywood.Models
         }
         public event EventHandler OrderUpdated;
 
-        [JsonProperty("itemId")]
+        [JsonProperty("items")]
         public Dictionary<Guid, int> Items { get; set; } // Hashmap
 
         [JsonProperty("notes")]

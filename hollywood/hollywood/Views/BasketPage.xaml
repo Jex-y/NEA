@@ -16,7 +16,9 @@
                 <StackLayout>
                     <Label Text="Add some items to you basket to see them here!"
                            TextColor="Black"
-                           VerticalOptions="CenterAndExpand"/>
+                           VerticalOptions="CenterAndExpand"
+                           HorizontalOptions="CenterAndExpand"
+                           HorizontalTextAlignment="Center"/>
                 </StackLayout>
             </CollectionView.EmptyView>
             
