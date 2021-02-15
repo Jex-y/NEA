@@ -17,36 +17,35 @@ namespace hollywood.ViewModels
         readonly IContextService contextService;
         readonly IRestService restService;
 
-        bool _isCurrent;
         bool _showButton;
         readonly ICommand _getSessIdCommand;
         readonly ICommand _submitOrderCommand;
-        readonly string _submitOrderText = "Order";
         readonly string _getSessIdText = "Scan code";
         ObservableCollection<Item> _items;
 
+        public string Title = "Basket";
 
-        public BasketPageViewModel(Order order=null) 
+
+        public BasketPageViewModel() 
         {
             contextService = DependencyService.Get<IContextService>();
             restService = DependencyService.Get<IRestService>();
             Items = new ObservableCollection<Item>();
 
+            contextService.Context.Basket.OrderUpdated += Basket_OrderUpdated;
             UpdateItems();
 
-            if (order is null)
-            {
-                IsCurrent = true;
-                order = contextService.Context.Basket;
-            }
-            else 
-            {
-                IsCurrent = false;
-            }
-
-            ShowButton = IsCurrent & (HasItems | !CanOrder);
             _getSessIdCommand = new Command(async () => await GetSessId());
             _submitOrderCommand = new Command(async () => await SubmitOrder());
+        }
+
+        void Basket_OrderUpdated(object sender, EventArgs e)
+        {
+            OnPropertyChanged("ButtonCommand");
+            OnPropertyChanged("ButtonText");
+            OnPropertyChanged("Items");
+            OnPropertyChanged("CanOrder");
+            OnPropertyChanged("HasItems");
         }
 
         public ICommand ButtonCommand 
@@ -56,7 +55,7 @@ namespace hollywood.ViewModels
 
         public string ButtonText 
         {
-            get { return CanOrder ? _submitOrderText : _getSessIdText; }
+            get { return CanOrder ? string.Format("Order \u26AB Total: {0:C2}", contextService.Context.Basket.Total) : _getSessIdText; }
         }
 
         public ObservableCollection<Item> Items 
@@ -74,19 +73,6 @@ namespace hollywood.ViewModels
         {
             get { return !(contextService.Context.Basket.Items.Count == 0); }
         }
-
-        public bool IsCurrent 
-        {
-            get { return _isCurrent; }
-            set { SetProperty(ref _isCurrent, value); }
-        }
-
-        public bool ShowButton 
-        {
-            get { return _showButton; }
-            set { SetProperty(ref _isCurrent, value); }
-        }
-
         async Task GetSessId() 
         {
             IQrScannerService qrScanner = DependencyService.Get<IQrScannerService>();
@@ -95,11 +81,13 @@ namespace hollywood.ViewModels
             {
                 IContextService contextService = DependencyService.Get<IContextService>();
                 contextService.Context.CurrentSession = new Session { SessId = new Guid(sessId) };
+                contextService.Context.Basket.TriggerUpdate();
             }
             else
             {
                 Debug.WriteLine("Could not scan qr code");
             }
+            
         }
 
         async Task SubmitOrder() 
@@ -107,6 +95,8 @@ namespace hollywood.ViewModels
             if (await restService.SubmitOrder(contextService.Context.Basket, contextService.Context.CurrentSession))
             {
                 contextService.Context.Basket = new Order();
+                contextService.Context.Basket.OrderUpdated += Basket_OrderUpdated;
+                contextService.Context.Basket.TriggerUpdate();
                 UpdateItems();
             }
             else
@@ -132,10 +122,6 @@ namespace hollywood.ViewModels
             {
                 foreach (Guid itemId in contextService.Context.Basket.Items.Keys)
                 {
-                    if (startEmpty)
-                    {
-                        _items.Add(null);
-                    }
                     GetItem(itemId, i);
                     i++;
                 }
@@ -145,8 +131,8 @@ namespace hollywood.ViewModels
 
         async Task GetItem(Guid itemId, int index) 
         {
-            Items.Insert(index, restService.GetItemDetail(itemId).Result);
+            Item item = restService.GetItemDetail(itemId).Result;
+            Items.Insert(index, item);
         }
-
     }
 }
