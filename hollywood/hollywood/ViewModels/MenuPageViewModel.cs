@@ -22,15 +22,16 @@ namespace hollywood.ViewModels
 
         readonly ICommand _refreshCommand;
         readonly ICommand _searchCommand;
-        readonly IRestService ApiConnection;
+        readonly IRestService restService;
+        readonly IContextService contextService;
 
         public MenuPageViewModel(MenuHandle display = null)
         {
-            ApiConnection = DependencyService.Get<IRestService>();
+            restService = DependencyService.Get<IRestService>();
+            contextService = DependencyService.Get<IContextService>();
 
             if (display is null) // Handle top level case
             {
-                Debug.WriteLine("Was null");
                 display = new MenuHandle { 
                     Name="Menu", 
                     UrlName="", 
@@ -40,9 +41,14 @@ namespace hollywood.ViewModels
             MenuHandle = display;
             Title = MenuHandle.Name;
 
-            // Configure refresh command
+            contextService.Context.Basket.OrderUpdated += Basket_OrderUpdated;
             _refreshCommand = new Command(async() => await OnRefresh());
             _searchCommand = new Command(async() => await OnSearch());
+        }
+
+        private void Basket_OrderUpdated(object sender, EventArgs e)
+        {
+            OnPropertyChanged("Total");
         }
 
         public Menu MenuData
@@ -73,6 +79,11 @@ namespace hollywood.ViewModels
             get { return _searchCommand; }
         }
 
+        public string Total 
+        {
+            get { return string.Format("Total: {0:C2}", contextService.Context.Basket.Total); }
+        }
+
         async Task OnRefresh()
         {
             IsRefreshing = true;
@@ -81,7 +92,7 @@ namespace hollywood.ViewModels
             {
                 try
                 {
-                    MenuData = await ApiConnection.GetMenuAsync(MenuHandle);
+                    MenuData = await restService.GetMenuAsync(MenuHandle);
                     MenusAge = DateTime.Now;
                 }
                 catch (Exception ex)
