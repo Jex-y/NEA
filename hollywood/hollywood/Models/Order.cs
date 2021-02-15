@@ -12,6 +12,9 @@ namespace hollywood.Models
         {
             Items = new Dictionary<Guid, ItemOrder>();
         }
+
+
+        Decimal _total;
         public event EventHandler OrderUpdated;
 
         [JsonProperty("items")]
@@ -48,10 +51,25 @@ namespace hollywood.Models
             }
         }
 
+        public Decimal Total {
+            get { return _total; }
+            set 
+            { 
+                _total = value;
+                OnOrderUpdated(EventArgs.Empty);
+            }
+        }
+
+        public void TriggerUpdate() 
+        {
+            OnOrderUpdated(EventArgs.Empty);
+        }
+
         protected virtual void OnOrderUpdated(EventArgs args) 
         {
             EventHandler handler = OrderUpdated;
             handler?.Invoke(this, args);
         }
+
     }
 }
