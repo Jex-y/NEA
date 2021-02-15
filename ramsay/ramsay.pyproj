@@ -86,16 +86,22 @@
     <Folder Include="backend\tests\" />
     <Folder Include="door\" />
     <Folder Include="door\migrations\" />
+    <Folder Include="door\static\" />
+    <Folder Include="door\static\door\" />
     <Folder Include="door\templates\" />
     <Folder Include="door\templates\door\" />
     <Folder Include="kitchen\" />
     <Folder Include="kitchen\migrations\" />
+    <Folder Include="kitchen\static\" />
+    <Folder Include="kitchen\static\kitchen\" />
     <Folder Include="kitchen\templates\" />
     <Folder Include="kitchen\templates\kitchen\" />
     <Folder Include="ramsay\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="door\static\door\doorQR.js" />
     <Content Include="door\templates\door\index.html" />
+    <Content Include="kitchen\static\kitchen\GenerateTable.js" />
     <Content Include="kitchen\templates\kitchen\index.html" />
     <Content Include="pytest.ini" />
     <Content Include="requirements.txt" />
