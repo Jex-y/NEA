@@ -252,10 +252,11 @@ class ItemOrderListView(APIView):
     def query_database(self):
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT backend_itemorder.id, name, quantity, notes FROM backend_item, backend_itemorder, backend_order WHERE
+            SELECT backend_itemorder.id, name, quantity, notes, table_id FROM backend_item, backend_itemorder, backend_order, backend_session WHERE
 	            completed = 0 AND
 	            backend_item.id = backend_itemorder.item_id AND
-	            backend_order.id = backend_itemorder.order_id 
+	            backend_order.id = backend_itemorder.order_id AND 
+	            backend_order.session_id = backend_session.sessId 
 	            ORDER BY backend_order.submitted
             """)
             rows = cursor.fetchall()
@@ -264,12 +265,13 @@ class ItemOrderListView(APIView):
     def get(self, request):
         itemOrders = self.query_database()
         data = []
-        for id, name, quantity, notes in itemOrders:
+        for id, name, quantity, notes, table in itemOrders:
             data.append({
                         'id':str(uuid.UUID(id)),
                         'name':name,
                          'quantity':quantity,
                          'notes':notes,
+                         'table':table
                          })
         return Response(data)
 

@@ -33,6 +33,7 @@ namespace hollywood.Views
         {
             base.OnAppearing();
 
+            vm.ForceUpdate();
             vm.RefreshCommand.Execute(null);
         }
     }

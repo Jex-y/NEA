@@ -62,12 +62,19 @@
                             Grid.Column="1"
                             InputTransparent="True"/>
 
+                        <ImageButton Source="notes.png"
+                                     Command="{Binding AddNotesCommand}"
+                                     BackgroundColor="Transparent"
+                                     Grid.Row="0"
+                                     Grid.Column="2"
+                                     Scale="0.8"/>
+
                         <Grid
                             Grid.Row="1"
                             Grid.Column="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="0.5*"/>
+                                <ColumnDefinition Width="0.3*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
@@ -125,7 +132,8 @@
                     CornerRadius="8"
                     Grid.Row="1"
                     Grid.ColumnSpan="2"
-                    Margin="20,20,20,20"/>
+                    Margin="20,20,20,20"
+                    IsVisible="{Binding HasItems}"/>
         </Grid>
     </StackLayout>
 </ContentPage>

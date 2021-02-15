@@ -75,6 +75,24 @@ namespace hollywood.Models
             }
         }
 
+        public string Notes
+        {
+            get
+            {
+                if (!(ThisItemOrder is null))
+                {
+                    return ThisItemOrder.notes;
+                }
+                return "";
+            }
+
+            set
+            {
+                ThisItemOrder = new ItemOrder { num = ThisItemOrder.num, notes = value };
+                NotifyPropertyChanged();
+            }
+        }
+
         void NotifyPropertyChanged([CallerMemberName] String propertyName = "") 
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -119,7 +137,6 @@ namespace hollywood.Models
 
         void removeItemOrder() 
         {
-            // Not actually used as there is no way to refresh the view to no longer show the item.
             contextService.Context.Basket.Items.Remove(ID);
         }
         async Task OnTapped()
@@ -129,7 +146,7 @@ namespace hollywood.Models
 
         async Task OnAddNotes() 
         {
-            
+            Notes = await App.Current.MainPage.DisplayPromptAsync("Order Notes", "Add order preperation notes here", initialValue: Notes);
         }
         async Task OnAdd()
         {

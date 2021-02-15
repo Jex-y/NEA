@@ -652,32 +652,38 @@ class ItemOrderListViewTest(APITestCase):
         self.maxDiff=None
         
         json_data = response.data
+
         expected_json = [
                            {
                               'id':str(self.itemorder1.id),
                               'name':str(self.itemorder1.item.name),
                               'quantity':self.itemorder1.quantity,
-                              'notes':self.itemorder1.notes
+                              'notes':self.itemorder1.notes,
+                              'table':1,
                            },
                            {
                               'id':str(self.itemorder3.id),
                               'name':str(self.itemorder3.item.name),
                               'quantity':self.itemorder3.quantity,
-                              'notes':self.itemorder3.notes
+                              'notes':self.itemorder3.notes,
+                              'table':1,
                            },
                            {
                               'id':str(self.itemorder2.id),
                               'name':str(self.itemorder2.item.name),
                               'quantity':self.itemorder2.quantity,
-                              'notes':self.itemorder2.notes
+                              'notes':self.itemorder2.notes,
+                              'table':2,
                            },
                            {
                               'id':str(self.itemorder4.id),
                               'name':str(self.itemorder4.item.name),
                               'quantity':self.itemorder4.quantity,
-                              'notes':self.itemorder4.notes
+                              'notes':self.itemorder4.notes,
+                              'table':2,
                            },
                         ]
+
 
         self.assertEqual(json_data, expected_json)
 

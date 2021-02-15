@@ -8,13 +8,11 @@ using Xamarin.Forms;
 
 using Menu = hollywood.Models.Menu;
 
-// TODO: Remane MenuHandle, deal with case when cannot connect to server 
-// i.e. create a popup with either server error message or connect to internet or server down
 namespace hollywood.ViewModels
 {
     public class MenuPageViewModel : BaseViewModel
     {
-        readonly MenuHandle MenuHandle; // Change if u think of a better name
+        readonly MenuHandle MenuHandle; 
         Menu _menuData;
         bool _hasMenus = false;
         DateTime MenusAge = DateTime.MinValue;
@@ -46,7 +44,12 @@ namespace hollywood.ViewModels
             _searchCommand = new Command(async() => await OnSearch());
         }
 
-        private void Basket_OrderUpdated(object sender, EventArgs e)
+        void Basket_OrderUpdated(object sender, EventArgs e)
+        {
+            OnPropertyChanged("Total");
+        }
+
+        public void ForceUpdate() 
         {
             OnPropertyChanged("Total");
         }
@@ -98,7 +101,7 @@ namespace hollywood.ViewModels
                 catch (Exception ex)
                 {
                     Debug.WriteLine(@"\tERROR {0}", ex.Message);
-                    throw ex; // TODO: Make a popup or something??
+                    throw ex; 
                 }
             }
             HasMenus = MenuData.SubMenus.Count > 0;
