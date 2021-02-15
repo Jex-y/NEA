@@ -17,24 +17,34 @@ namespace hollywood.ViewModels
         readonly IContextService contextService;
         readonly IRestService restService;
 
+        bool _isCurrent;
+        bool _showButton;
         readonly ICommand _getSessIdCommand;
         readonly ICommand _submitOrderCommand;
         readonly string _submitOrderText = "Order";
         readonly string _getSessIdText = "Scan code";
         ObservableCollection<Item> _items;
-        bool _canOrder;
-        bool _hasItems;
 
-        public BasketPageViewModel() 
+
+        public BasketPageViewModel(Order order=null) 
         {
             contextService = DependencyService.Get<IContextService>();
             restService = DependencyService.Get<IRestService>();
             Items = new ObservableCollection<Item>();
-               
-            Debug.WriteLine("Got here");
 
             UpdateItems();
 
+            if (order is null)
+            {
+                IsCurrent = true;
+                order = contextService.Context.Basket;
+            }
+            else 
+            {
+                IsCurrent = false;
+            }
+
+            ShowButton = IsCurrent & (HasItems | !CanOrder);
             _getSessIdCommand = new Command(async () => await GetSessId());
             _submitOrderCommand = new Command(async () => await SubmitOrder());
         }
@@ -63,6 +73,18 @@ namespace hollywood.ViewModels
         public bool HasItems 
         {
             get { return !(contextService.Context.Basket.Items.Count == 0); }
+        }
+
+        public bool IsCurrent 
+        {
+            get { return _isCurrent; }
+            set { SetProperty(ref _isCurrent, value); }
+        }
+
+        public bool ShowButton 
+        {
+            get { return _showButton; }
+            set { SetProperty(ref _isCurrent, value); }
         }
 
         async Task GetSessId() 

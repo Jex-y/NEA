@@ -173,7 +173,7 @@ namespace hollywood.Droid.Services
             {
                 var jsonData = new
                 {
-                    order = order,
+                    order,
                     sessId = sess.SessId
                 };
 

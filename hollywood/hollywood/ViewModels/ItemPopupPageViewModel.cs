@@ -20,6 +20,7 @@ namespace hollywood.ViewModels
         float _removeOpacity;
         float _addToBasketOpacity;
         int _numItems;
+        //string _notes;
 
         readonly int startNum;
 
@@ -96,6 +97,7 @@ namespace hollywood.ViewModels
         {
             get { return _addToBasketCommand; }
         }
+        
         async Task OnClose() 
         {
             await App.Current.MainPage.Navigation.PopPopupAsync();

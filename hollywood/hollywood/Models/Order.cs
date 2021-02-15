@@ -10,22 +10,19 @@ namespace hollywood.Models
     {
         public Order() 
         {
-            Items = new Dictionary<Guid, int>();
+            Items = new Dictionary<Guid, ItemOrder>();
         }
         public event EventHandler OrderUpdated;
 
         [JsonProperty("items")]
-        public Dictionary<Guid, int> Items { get; set; } // Hashmap
-
-        [JsonProperty("notes")]
-        public string notes { get; set; }
+        public Dictionary<Guid, ItemOrder> Items { get; set; } 
 
         public int getNum(Guid itemId) 
         {
             int num = 0;
             if (Items.ContainsKey(itemId)) 
             {
-                num = Items[itemId];
+                num = Items[itemId].num;
             }
 
             return num;
@@ -33,15 +30,18 @@ namespace hollywood.Models
 
         public void updateNum(Guid itemId, int num) 
         {
-            if (!(Items.ContainsKey(itemId) && Items[itemId] == num)) 
+            bool itemOrderExists = Items.ContainsKey(itemId);
+            if (!(itemOrderExists && Items[itemId].num == num)) 
+                // Doesn't yet exist or num is not the same as before
             {
                 if (num == 0)
                 {
                     Items.Remove(itemId);
                 }
-                else 
+                else
                 {
-                    Items[itemId] = num;
+                    string notes = itemOrderExists ? Items[itemId].notes : "";
+                    Items[itemId] = new ItemOrder { num=num, notes=notes };
                 }
 
                 OnOrderUpdated(EventArgs.Empty);

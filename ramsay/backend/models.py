@@ -377,6 +377,8 @@ class Order(models.Model):
     )
         the items assoiated with the order
         many to many through ItemOrder so that each item can have an assosiated quantity and notes
+    submitted : models.DateTimeField(default=timezone.now)
+        datetime that the order was submitted
 
     Methods
     --------
@@ -389,7 +391,7 @@ class Order(models.Model):
         through='ItemOrder',
         through_fields=('order', 'item'),
     )
-    notes = models.CharField(max_length=256, blank=True, null=True)
+    submitted = models.DateTimeField(default=timezone.now)
 
 class ItemOrder(models.Model):
     """
@@ -405,6 +407,8 @@ class ItemOrder(models.Model):
         foreign key to the item that the ItemOrder references
     quantity : IntegerField()
         the quantity of the item being ordered
+    completed : models.BooleanField(default=False)
+        whether the item order has been fulfilled
     notes : CharField(max_length=256, blank=True, null=True)
         any assosiated notes with the item order
         e.g. no gherkins 
@@ -414,7 +418,10 @@ class ItemOrder(models.Model):
     None
 
     """
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     quantity = models.IntegerField()
+    completed = models.BooleanField(default=False)
+    notes = models.CharField(max_length=256, blank=True, null=True)
 

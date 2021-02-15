@@ -54,9 +54,8 @@
                             Grid.Column="0"
                             InputTransparent="True"/>
 
-                        <!--Call something to get the total price, e.g. passing the item to a function in the binding context
-                        Still need to acutaly bind the page.-->
-                            <Label Text="{Binding Price, StringFormat='{0:C}'}"
+                        
+                    <Label Text="{Binding TotalPrice, StringFormat='{0:C}'}"
                             FontSize="Body" 
                             FontAttributes="Bold"
                             TextColor="Black"
@@ -73,6 +72,6 @@
                 VerticalOptions="End"
                 CornerRadius="64"
                 Grid.Row="1"
-                IsVisible="{Binding hasItems}"/>
+                IsEnabled="{Binding showButton}"/>
     </Grid>
 </ContentPage>

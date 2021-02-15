@@ -4,6 +4,7 @@ from django.http import Http404
 from django.db.models import Q
 from django.utils import timezone
 from django.core import exceptions
+from django.db import connection
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -195,7 +196,6 @@ class OrderCreateView(APIView):
     def validate_json(self,json):
         try:
             sessid = json['sessId']
-            notes = json['order']['notes']
             items = json['order']['items']
             valid = True
         except KeyError:
@@ -215,16 +215,16 @@ class OrderCreateView(APIView):
 
                 else:
                     order = models.Order.objects.create(
-                        session=models.Session.objects.get(sessId=json['sessId']),
-                        notes=json['order']['notes'],
-                        )
+                        session=models.Session.objects.get(sessId=json['sessId']))
 
                     for item in json['order']['items']:
-                        num = json['order']['items'][item]
+                        num = json['order']['items'][item]['num']
+                        notes = json['order']['items'][item]['notes']
                         itemOrder = models.ItemOrder.objects.create(
                             order=order,
                             item=models.Item.objects.get(id=item),
                             quantity=num,
+                            notes=notes,
                             )
                     requestStatus = status.HTTP_204_NO_CONTENT
 
@@ -246,6 +246,55 @@ class TagListView(APIView):
     def get(self, request):
         tags = self.get_objects()
         serializer = serializers.TagSerializer(tags, many=True, context={'request': request})
+        return Response(serializer.data)
+
+class ItemOrderListView(APIView):
+    def query_database(self):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+            SELECT backend_itemorder.id, name, quantity, notes FROM backend_item, backend_itemorder, backend_order WHERE
+	            completed = 0 AND
+	            backend_item.id = backend_itemorder.item_id AND
+	            backend_order.id = backend_itemorder.order_id 
+	            ORDER BY backend_order.submitted
+            """)
+            rows = cursor.fetchall()
+            return rows
+
+    def get(self, request):
+        itemOrders = self.query_database()
+        data = []
+        for id, name, quantity, notes in itemOrders:
+            data.append({
+                        'id':str(uuid.UUID(id)),
+                        'name':name,
+                         'quantity':quantity,
+                         'notes':notes,
+                         })
+        return Response(data)
+
+class ItemOrderCompleteView(APIView):
+    def post(self, request):
+        id = request.data['id']
+        requestStatus = status.HTTP_400_BAD_REQUEST
+        try:
+            itemOrder = models.ItemOrder.objects.get(id=id)
+            itemOrder.completed = True
+            itemOrder.save()
+            requestStatus = status.HTTP_202_ACCEPTED
+        except (exceptions.ObjectDoesNotExist, exceptions.ValidationError):
+            requestStatus = status.HTTP_400_BAD_REQUEST
+
+        return Response(status=requestStatus)
+
+class SessionOrderListView(APIView):
+    def get_objects(self, sessId):
+        itemOrders = models.ItemOrder.object.filter(order__session=sessId)
+        return itemOrders
+
+    def get(self, request, sessId):
+        itemOrders = self.get_objects(sessId)
+        serializer = serializers.ItemOrderSerializer(itemOrders, many=True)
         return Response(serializer.data)
 
                
