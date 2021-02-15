@@ -16,18 +16,14 @@ namespace hollywood.ViewModels
     {
         readonly IContextService contextService;
         readonly IRestService restService;
-
-        bool _showButton;
         readonly ICommand _getSessIdCommand;
         readonly ICommand _submitOrderCommand;
         readonly string _getSessIdText = "Scan code";
         ObservableCollection<Item> _items;
 
-        public string Title = "Basket";
-
-
         public BasketPageViewModel() 
         {
+            Title = "Basket";
             contextService = DependencyService.Get<IContextService>();
             restService = DependencyService.Get<IRestService>();
             Items = new ObservableCollection<Item>();
@@ -96,7 +92,7 @@ namespace hollywood.ViewModels
             {
                 contextService.Context.Basket = new Order();
                 contextService.Context.Basket.OrderUpdated += Basket_OrderUpdated;
-                contextService.Context.Basket.TriggerUpdate();
+                contextService.Context.Basket.Total = 0;
                 UpdateItems();
             }
             else
