@@ -7,6 +7,7 @@ from backend.models import *
 from backend.serializers import *
 import json
 import datetime
+import time
 
 def checkJsonEqual(a, b):
     # Only needs to be used when the order of items may not be the same
@@ -587,3 +588,104 @@ class TagListViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json_data = json.loads(response.content)
         self.assertEqual(json_data, expected)
+
+
+class ItemOrderListViewTest(APITestCase):
+    def setUp(self):
+        table1 = Table.objects.create(table_number=1)
+        self.sess1 = Session.objects.create(table=table1)
+
+        self.order1 = Order.objects.create(
+            session=self.sess1)
+        
+        table2 = Table.objects.create(table_number=2)
+        self.sess2 = Session.objects.create(table=table2)
+
+        self.apple = Item.objects.create(
+            name='Apple', 
+            description='Some text', 
+            price=12.34)
+
+        self.bannana = Item.objects.create(
+            name='Bannana', 
+            description='This is a bannana', 
+            price=12.34)
+
+        self.coffee = Item.objects.create(
+            name='Coffee', 
+            description='Contains caffeine', 
+            price=56.78)
+
+        # Need some time between the orders to be reliable
+        time.sleep(0.1)
+
+        self.order2 = Order.objects.create(
+            session=self.sess2)
+
+        self.itemorder1 = ItemOrder.objects.create(
+            order=self.order1, 
+            item=self.apple, 
+            quantity=4,
+            notes='Could you slice the apple please')
+
+        self.itemorder2 =  ItemOrder.objects.create(
+            order=self.order2, 
+            item=self.bannana, 
+            quantity=3,
+            notes='')
+
+        self.itemorder3 =  ItemOrder.objects.create(
+            order=self.order1, 
+            item=self.apple, 
+            quantity=2,
+            notes='Please dont slice it')
+
+        self.itemorder4 =  ItemOrder.objects.create(
+            order=self.order2, 
+            item=self.coffee, 
+            quantity=1,
+            notes='Very hot please')
+
+    def test_view(self):
+        response = self.client.get(reverse('backend:itemorderlist'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.maxDiff=None
+        
+        json_data = response.data
+        expected_json = [
+                           {
+                              'id':str(self.itemorder1.id),
+                              'name':str(self.itemorder1.item.name),
+                              'quantity':self.itemorder1.quantity,
+                              'notes':self.itemorder1.notes
+                           },
+                           {
+                              'id':str(self.itemorder3.id),
+                              'name':str(self.itemorder3.item.name),
+                              'quantity':self.itemorder3.quantity,
+                              'notes':self.itemorder3.notes
+                           },
+                           {
+                              'id':str(self.itemorder2.id),
+                              'name':str(self.itemorder2.item.name),
+                              'quantity':self.itemorder2.quantity,
+                              'notes':self.itemorder2.notes
+                           },
+                           {
+                              'id':str(self.itemorder4.id),
+                              'name':str(self.itemorder4.item.name),
+                              'quantity':self.itemorder4.quantity,
+                              'notes':self.itemorder4.notes
+                           },
+                        ]
+
+        self.assertEqual(json_data, expected_json)
+
+
+class ItemOrderCompleteViewTest(APITestCase):
+    def setUp(self):
+        pass
+
+class SessionOrderListViewTest(APITestCase):
+    def setUp(self):
+        pass

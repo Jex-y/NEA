@@ -418,6 +418,7 @@ class ItemOrder(models.Model):
     None
 
     """
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     quantity = models.IntegerField()

@@ -11,5 +11,7 @@ urlpatterns = [
         path('sessions/new', SessionCreateView.as_view(), name='newsess'),
         path('sessions/validate', SessionValidateView.as_view(), name='validsess'),
         path('orders/new', OrderCreateView.as_view(), name='neworder'),
+        path('orders/', ItemOrderListView.as_view(), name='itemorderlist'),
+        path('orders/markcompleted', ItemOrderCompleteView.as_view(), name='itemordercomplete'),
         path('tags', TagListView.as_view(), name='tags'),
     ]

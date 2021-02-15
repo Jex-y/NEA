@@ -22,4 +22,3 @@ class ItemOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemOrder
         fields = ('item', 'quantity', 'notes', 'completed')
-
