@@ -5,6 +5,7 @@
              Title="{Binding Title}">
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{Binding Total}"/>
         <ToolbarItem Name="Search"
                      Order="Primary"
                      Icon="search.png"

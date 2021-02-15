@@ -74,7 +74,6 @@ namespace hollywood.Droid.Services
                 // string content = await File.ReadAllTextAsync(fileName);
                 // TODO: Investigate why this doesn't work 
                 string content = File.ReadAllText(fileName);
-                Debug.WriteLine(content);
                 _context = JsonConvert.DeserializeObject<Context>(content);
                 result = true;
             }

@@ -20,7 +20,6 @@ namespace hollywood.ViewModels
         float _removeOpacity;
         float _addToBasketOpacity;
         int _numItems;
-        //string _notes;
 
         readonly int startNum;
 
@@ -36,6 +35,7 @@ namespace hollywood.ViewModels
             contextService = DependencyService.Get<IContextService>();
 
             startNum = contextService.Context.Basket.getNum(_item.ID);
+            contextService.Context.Basket.Total -= startNum * Item.Price;
             NumItems = startNum == 0 ? 1 : startNum;
 
             RemoveOpacity = 1.0f;
@@ -100,6 +100,7 @@ namespace hollywood.ViewModels
         
         async Task OnClose() 
         {
+            contextService.Context.Basket.Total += Item.Price * startNum;
             await App.Current.MainPage.Navigation.PopPopupAsync();
         }
 
@@ -127,6 +128,7 @@ namespace hollywood.ViewModels
         async Task OnAddToBasket() 
         {
             contextService.Context.Basket.updateNum(_item.ID, NumItems);
+            contextService.Context.Basket.Total += Item.Price * NumItems;
 
             await App.Current.MainPage.Navigation.PopPopupAsync();
         }
