@@ -253,7 +253,7 @@ class ItemOrderListView(APIView):
         with connection.cursor() as cursor:
             cursor.execute("""
             SELECT backend_itemorder.id, name, quantity, notes FROM backend_item, backend_itemorder, backend_order WHERE
-	            completed = false AND
+	            completed = 0 AND
 	            backend_item.id = backend_itemorder.item_id AND
 	            backend_order.id = backend_itemorder.order_id 
 	            ORDER BY backend_order.submitted
