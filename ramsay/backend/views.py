@@ -290,13 +290,29 @@ class ItemOrderCompleteView(APIView):
         return Response(status=requestStatus)
 
 class SessionOrderListView(APIView):
-    def get_objects(self, sessId):
-        itemOrders = models.ItemOrder.object.filter(order__session=sessId)
-        return itemOrders
+    def query_database(self, sess_id):
+        sess_id = sess_id.replace('-','')
+        with connection.cursor() as cursor:
+            cursor.execute(f"""
+            SELECT name, quantity, notes, completed, price FROM backend_item, backend_itemorder, backend_order WHERE
+	            backend_itemorder.item_id = backend_item.id AND 
+	            backend_itemorder.order_id = backend_order.id AND 
+	            backend_order.session_id = "{sess_id}"
+            """)
+            rows = cursor.fetchall()
+            return rows
 
-    def get(self, request, sessId):
-        itemOrders = self.get_objects(sessId)
-        serializer = serializers.ItemOrderSerializer(itemOrders, many=True)
-        return Response(serializer.data)
+    def get(self, request, sess_id):
+        itemOrders = self.query_database(sess_id)
+        data = []
+        for name, quantity, notes, completed, price in itemOrders:
+            data.append({
+                         'name':name,
+                         'quantity':quantity,
+                         'notes':notes,
+                         'completed':completed,
+                         'total':price*quantity
+                         })
+        return Response(data)
 
                

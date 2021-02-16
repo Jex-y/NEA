@@ -16,5 +16,6 @@ namespace hollywood.Services
         Task<Item> GetItemDetail(Guid itemId);
         Task<bool> ValidateSessId(string sessId);
         Task<bool> SubmitOrder(Order order, Session sess);
+        Task<ObservableCollection<PastItemOrder>> GetPastItems(Session sess);
     }
 }

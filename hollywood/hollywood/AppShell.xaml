@@ -37,11 +37,18 @@
             </ShellContent>
         </Tab>
         <Tab Title="Basket"
-             Icon="xamarin_logo.png">
+             Icon="cart.png">
             <ShellContent x:Name="BasketPageTab">
                 <views:BasketPage/>
             </ShellContent>
             
+        </Tab>
+        <Tab Title="Orders"
+             Icon="xamarin_logo.png">
+            <ShellContent x:Name="PastOrderTab">
+                <views:PastOrderPage/>
+            </ShellContent>
+
         </Tab>
     </TabBar>
     

@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="hollywood.Views.PastOrderPage"
+             Title="{Binding Title}">
+
+    <StackLayout>
+        <CollectionView
+            ItemsSource="{Binding Items}"
+            Margin="16,16,16,16">
+
+            <CollectionView.EmptyView>
+                <StackLayout>
+                    <Label Text="Order some items to see them here!"
+                               TextColor="Black"
+                               VerticalOptions="CenterAndExpand"
+                               HorizontalOptions="CenterAndExpand"
+                               HorizontalTextAlignment="Center"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid HeightRequest="64">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="1" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="{Binding Name}"
+                                FontAttributes="Bold"
+                                FontSize="Large"
+                                TextColor="Black"
+                                Grid.Row="0"
+                                Grid.Column="0"/>
+
+                        <Label Text="{Binding Notes}"
+                                FontSize="Medium"
+                                TextColor="Black"
+                                Grid.Row="1"
+                                Grid.Column="0"/>
+
+                        <Label Text="{Binding Num, StringFormat='Quantity: {0:N0}'}"
+                                FontSize="Medium"
+                                TextColor="Black"
+                                Grid.Row="0"
+                                Grid.Column="2"
+                               HorizontalOptions="EndAndExpand"/>
+
+                        <Label Text="{Binding Total, StringFormat='Subtotal: {0:C}'}"
+                                FontSize="Medium"
+                                TextColor="Black"
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                HorizontalOptions="EndAndExpand"/>
+
+
+                        <BoxView HeightRequest="1"
+                               BackgroundColor="#121212"
+                               Opacity="0.16"
+                               Grid.ColumnSpan="3"
+                               Grid.Row="2"
+                               VerticalOptions="End"
+                               Margin="16,0,16,0"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+        <Label Text="{Binding Total, StringFormat='Total: {0:C}'}"
+                FontSize="Large"
+                TextColor="Black"
+                Grid.Row="1"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                VerticalOptions="End"/>
+
+        
+    </StackLayout>
+
+</ContentPage>
