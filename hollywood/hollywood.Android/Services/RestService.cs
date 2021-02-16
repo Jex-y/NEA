@@ -237,6 +237,21 @@ namespace hollywood.Droid.Services
 
             return results;
         }
+
+        public async Task CloseSession(Session sess) 
+        {
+            Uri uri = new Uri(Constants.RestUrl + "sessions/close");
+            try
+            {
+                StringContent data = new StringContent("sessId=" + sess.SessId, Encoding.UTF8, "application/x-www-form-urlencoded");
+                HttpResponseMessage response = await client.PostAsync(uri, data);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
+        }
         async Task WarnUserCannotConnect() 
         {
             NetworkAccess networkState = Connectivity.NetworkAccess;

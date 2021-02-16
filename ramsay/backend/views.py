@@ -167,7 +167,6 @@ class SessionValidateView(APIView):
         msg = 'Request format incorrect'
         requestStatus = status.HTTP_400_BAD_REQUEST
         sessId = request.POST.get('sessId')
-
         if self.valid_uuidV4(sessId):
             try:
                 sess = models.Session.objects.get(sessId=sessId)
@@ -314,5 +313,20 @@ class SessionOrderListView(APIView):
                          'total':price*quantity
                          })
         return Response(data)
+
+class SessionCloseView(APIView):
+    def post(self, request):
+        id = request.POST.get('sessId')
+        requestStatus = status.HTTP_400_BAD_REQUEST
+        try:
+            sess = models.Session.objects.get(sessId=id)
+            sess.end_time = timezone.now()
+            sess.save()
+            requestStatus = status.HTTP_202_ACCEPTED
+        except (exceptions.ObjectDoesNotExist, exceptions.ValidationError):
+            requestStatus = status.HTTP_400_BAD_REQUEST
+
+        return Response(status=requestStatus)
+
 
                

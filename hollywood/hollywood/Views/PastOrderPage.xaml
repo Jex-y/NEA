@@ -82,7 +82,15 @@
                 HorizontalTextAlignment="Center"
                 VerticalOptions="End"/>
 
-        
+        <Button Text="Close Session"
+                    Command="{Binding CloseSessionCommand}"
+                    VerticalOptions="End"
+                    CornerRadius="8"
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="20,20,20,20"/>
+
+
     </StackLayout>
 
 </ContentPage>
