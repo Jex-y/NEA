@@ -39,9 +39,11 @@ class Tag(models.Model):
     e.g. Vegan, Spicy, Alcoholic.
     Allows a user to filter on does or does not have a specific tag.
     Optionally has an icon that is shown next to the item on the menu.
+
+    Meets requirements: 2.03
     ...
 
-    Attributes+-
+    Attributes
     --------
     id : UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
         primary key for database
@@ -80,6 +82,8 @@ class Tag(models.Model):
 class Item(models.Model):
     """
     A model to represent an item.
+    
+    Meets requirements: 2.01
     ...
 
     Attributes
@@ -135,6 +139,8 @@ class Item(models.Model):
 class Menu(models.Model):
     """
     A model to represent a menu.
+
+    Meets requirements: 2.02
     ...
 
     Attributes
@@ -337,6 +343,8 @@ class Table(models.Model):
 class Session(models.Model):
     """
     A model to represent an open or closed session
+
+    Meets requirements: 2.04 
     ...
 
     Attributes
@@ -364,6 +372,8 @@ class Session(models.Model):
 class Order(models.Model):
     """
     A model to represent orders
+
+    Meets requirements: 2.05
     ...
 
     Attributes
@@ -397,6 +407,8 @@ class ItemOrder(models.Model):
     """
     A model to create a many to many relationship with items and orders.
     Also records the quantity of items and any notes.
+
+    Meets requirements: 2.06
     ...
 
     Attributes
