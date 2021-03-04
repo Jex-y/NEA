@@ -144,9 +144,6 @@ class ItemMenuListView(APIView):
     get_objects(self, query):
         Queries the database and returns all items and submenus in a given menu where they are available
 
-    get_top_level(self):
-        Queries the database and returns all the available top level menus
-
     get(self, request, url_name):
         Serves the API method
 
@@ -169,33 +166,49 @@ class ItemMenuListView(APIView):
 
         """
         try:
-            menus = models.Menu.objects.filter(url_name=url_name)
-            item_queryset = models.Item.objects.none()
-            submenu_queryset = models.Menu.objects.none()
-            for menu in menus:
-                if menu.check_available():
-                    item_queryset |= menu.items.filter(available=True)
-                    submenu_queryset |= models.Menu.objects.filter(super_menu=menu)
-            return item_queryset, submenu_queryset
+            # Could be vulnerable to SQL injection from url_name
+            now = timezone.now()
+            time = str(now.time())
+            dayofweek = str(now.weekday())
+            super_menu = "IS NULL" if url_name is None else f"= '{url_name}'"
+            menus = models.Menu.objects.raw(f"""
+                SELECT * from backend_menu WHERE
+                    available = 1 AND
+	                super_menu_id {super_menu} AND
+	                (	
+		                ( start_time IS NULL OR start_time <= '{time}' ) AND 
+		                ( end_time IS NULL OR end_time >= '{time}' )
+	                ) AND
+	                (	
+		                ( start_day IS NULL OR start_day <= {dayofweek} ) AND 
+		                ( end_day IS NULL OR end_day >= {dayofweek} )
+	                )
+                """)
+
+            if url_name:
+                items = models.Item.objects.raw(f"""
+                SELECT backend_item.* from backend_item, backend_menu, backend_menu_items WHERE
+	                 url_name = '{url_name}' AND 
+	                 menu_id = backend_menu.id AND 
+	                 backend_item.id = item_id AND
+                     backend_item.available = 1 AND
+	                (	
+		                ( start_time IS NULL OR start_time <= '06:33:23.33' ) AND 
+		                ( end_time IS NULL OR end_time >= '06:33:23.33' )
+	                ) AND
+	                (	
+		                ( start_day IS NULL OR start_day <= 5 ) AND 
+		                ( end_day IS NULL OR end_day >= 5 )
+	                )
+
+                """)
+            else:
+                items = models.Item.objects.none()
+                
+            return menus, items
+
         except Exception as e:
-            raise Http404
-
-    def get_top_level(self):
-        """
-        Queries the database and returns the top level menus i.e. those that have to super menu
-
-        Parameters:
-            None
-
-        Returns:
-            (QuerySet): top level menus
-        Raises:
-            Http404: Database query failed
-
-        """
-        try:
-            return models.Menu.objects.filter(super_menu=None)
-        except:
+            print(e)
             raise Http404
         
     def get(self, request, url_name=None):
@@ -210,22 +223,14 @@ class ItemMenuListView(APIView):
             (HttpResponse): API method response with JSON data
             
         """
-        if url_name:
-            items, menus = self.get_objects(url_name)
-            item_serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
-            menu_serializer = serializers.MenuSerializer(menus, many=True, context={'request': request})
-            data = {
-                'items': item_serializer.data,
-                'menus': menu_serializer.data,
-                }
-        else: # Top level
-            menus = self.get_top_level()
-            serializer = serializers.MenuSerializer(menus, many=True, context={'request': request})
-            data = {
-                'items': [],
-                'menus': serializer.data
-                }
-        
+        menus, items = self.get_objects(url_name)
+        menu_serializer = serializers.MenuSerializer(menus, many=True, context={'request': request})
+        item_serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
+        data = {
+            'menus': menu_serializer.data,
+            'items': item_serializer.data,
+            }
+           
         return Response(data)
 
 class ItemDetailView(APIView):
