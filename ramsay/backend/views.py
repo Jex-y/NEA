@@ -188,19 +188,18 @@ class ItemMenuListView(APIView):
             if url_name:
                 items = models.Item.objects.raw(f"""
                 SELECT backend_item.* from backend_item, backend_menu, backend_menu_items WHERE
-	                 url_name = '{url_name}' AND 
-	                 menu_id = backend_menu.id AND 
-	                 backend_item.id = item_id AND
-                     backend_item.available = 1 AND
+	                url_name = '{url_name}' AND 
+	                menu_id = backend_menu.id AND 
+	                backend_item.id = item_id AND
+                    backend_item.available = 1 AND
 	                (	
-		                ( start_time IS NULL OR start_time <= '06:33:23.33' ) AND 
-		                ( end_time IS NULL OR end_time >= '06:33:23.33' )
+		                ( start_time IS NULL OR start_time <= '{time}' ) AND 
+		                ( end_time IS NULL OR end_time >= '{time}' )
 	                ) AND
 	                (	
-		                ( start_day IS NULL OR start_day <= 5 ) AND 
-		                ( end_day IS NULL OR end_day >= 5 )
+		                ( start_day IS NULL OR start_day <= {dayofweek} ) AND 
+		                ( end_day IS NULL OR end_day >= {dayofweek} )
 	                )
-
                 """)
             else:
                 items = models.Item.objects.none()
