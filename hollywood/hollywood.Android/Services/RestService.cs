@@ -200,7 +200,7 @@ namespace hollywood.Droid.Services
             ObservableCollection<Tag> results = null;
             try
             {
-                HttpResponseMessage response = client.GetAsync(uri).Result;
+                HttpResponseMessage response = await client.GetAsync(uri);
                 if (response.IsSuccessStatusCode)
                 {
                     string content = response.Content.ReadAsStringAsync().Result;
@@ -214,6 +214,43 @@ namespace hollywood.Droid.Services
             }
 
             return results;
+        }
+
+        public async Task<ObservableCollection<PastItemOrder>> GetPastItems(Session sess) 
+        {
+            Uri uri = new Uri(Constants.RestUrl + "orders/session/" + sess.SessId);
+            ObservableCollection<PastItemOrder> results = null;
+            try
+            {
+                HttpResponseMessage response = client.GetAsync(uri).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = response.Content.ReadAsStringAsync().Result;
+                    results = JsonConvert.DeserializeObject<ObservableCollection<PastItemOrder>>(content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
+
+            return results;
+        }
+
+        public async Task CloseSession(Session sess) 
+        {
+            Uri uri = new Uri(Constants.RestUrl + "sessions/close");
+            try
+            {
+                StringContent data = new StringContent("sessId=" + sess.SessId, Encoding.UTF8, "application/x-www-form-urlencoded");
+                HttpResponseMessage response = await client.PostAsync(uri, data);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                throw ex;
+            }
         }
         async Task WarnUserCannotConnect() 
         {

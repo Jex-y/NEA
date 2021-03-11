@@ -42,7 +42,6 @@
                             Opacity="0.80"
                             Grid.RowSpan="2"
                             Grid.Column="0"
-                            InputTransparent="True"
                             Margin="0,8,0,8"/>
 
                         <Label Text="{Binding Name}"
@@ -50,8 +49,7 @@
                             FontSize="Large"
                             TextColor="Black"
                             Grid.Row="0"
-                            Grid.Column="1"
-                            InputTransparent="True"/>
+                            Grid.Column="1"/>
 
 
                         <Label Text="{Binding TotalPrice, StringFormat='{0:C}'}"
@@ -59,8 +57,7 @@
                             FontAttributes="Bold"
                             TextColor="Black"
                             Grid.Row="1"
-                            Grid.Column="1"
-                            InputTransparent="True"/>
+                            Grid.Column="1"/>
 
                         <ImageButton Source="notes.png"
                                      Command="{Binding AddNotesCommand}"
