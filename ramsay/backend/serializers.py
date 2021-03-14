@@ -13,11 +13,6 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = ('id', 'name', 'description', 'price', 'tags', 'image')
 
-class MenuSerializer(serializers.ModelSerializer):
-   class Meta:
-        model = Menu
-        fields = ('name', 'url_name', 'description', 'image')
-
 class ItemOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemOrder
