@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hollywood.Android", "hollyw
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hollywood.iOS", "hollywood\hollywood.iOS\hollywood.iOS.csproj", "{26CE33B8-AB27-4F3E-AEA7-3F5365C8EB73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hollywood", "hollywood\hollywood\hollywood.csproj", "{7867F06B-FDBD-4BE7-8778-B123C4CB3035}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hollywood", "hollywood\hollywood\hollywood.csproj", "{7867F06B-FDBD-4BE7-8778-B123C4CB3035}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
