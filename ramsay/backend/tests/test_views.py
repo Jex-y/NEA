@@ -30,7 +30,6 @@ class ItemMenuListViewTest(APITestCase):
     def setUp(self):
         self.menuAlwaysAvailable = Menu.objects.create(name="Test Menu 1")
         self.menuNeverAvailable = Menu.objects.create(name="Test Menu 2", available=False)
-        self.menuE
 
     def test_top_level_available(self):
 
