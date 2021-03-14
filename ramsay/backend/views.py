@@ -11,7 +11,6 @@ from rest_framework import status
 from . import models
 from . import serializers
 
-
 class ItemSearchView(APIView):
     """
     API method to search item menus and descriptions
@@ -148,6 +147,10 @@ class ItemMenuListView(APIView):
         Serves the API method
 
     """
+
+    # This is a static variable used to test the view at different times
+    test_time = None
+
     def get_objects(self, url_name):
         """
         Queries the database and returns items and menus that are contained by the given menu. 
@@ -156,7 +159,7 @@ class ItemMenuListView(APIView):
         The use case for this would be if there are certain items in a menu that needed to be scheduled or removed together.
 
         Parameters:
-            url_name (str): The URL name of the menu to get the items of. 
+            url_name (str): The URL name of the menu to get the items of.
 
         Returns:
             (QuerySet): items in the given menu
@@ -167,41 +170,87 @@ class ItemMenuListView(APIView):
         """
         try:
             # Could be vulnerable to SQL injection from url_name
-            now = timezone.now()
+            if isinstance(ItemMenuListView.test_time, datetime.datetime):
+                now = ItemMenuListView.test_time
+            else:
+                now = timezone.now()
+            
             time = str(now.time())
             dayofweek = str(now.weekday())
-            super_menu = "IS NULL" if url_name is None else f"= '{url_name}'"
-            menus = models.Menu.objects.raw(f"""
-                SELECT * from backend_menu WHERE
-                    available = 1 AND
-	                super_menu_id {super_menu} AND
-	                (	
-		                ( start_time IS NULL OR start_time <= '{time}' ) AND 
-		                ( end_time IS NULL OR end_time >= '{time}' )
-	                ) AND
-	                (	
-		                ( start_day IS NULL OR start_day <= {dayofweek} ) AND 
-		                ( end_day IS NULL OR end_day >= {dayofweek} )
-	                )
-                """)
 
             if url_name:
+                with connection.cursor() as cursor:
+                    cursor.execute(f"""
+                        SELECT name, child.url_name, description, image FROM backend_menu menu, backend_menuurlname child, backend_menuurlname parent WHERE 
+                            menu.id = child.menu_id AND 
+                            super_menu_id = parent.menu_id AND 
+                            parent.url_name = '{url_name}' AND
+                            available = 1 AND
+	                        (	
+		                        ( start_time IS NULL OR start_time <= '{time}' ) AND 
+		                        ( end_time IS NULL OR end_time >= '{time}' )
+	                        ) AND
+	                        (	
+		                        ( start_day IS NULL OR start_day <= '{dayofweek}' ) AND 
+		                        ( end_day IS NULL OR end_day >= '{dayofweek}' )
+	                        )
+                    """)
+                    rows = cursor.fetchall()
+
+                menus = [
+                        {
+                            'name' : name,
+                            'url_name' : url_name,
+                            'description' : description,
+                            'image' : image,
+                        }
+                        for name, url_name, description, image in rows
+                    ]
+
                 items = models.Item.objects.raw(f"""
-                SELECT backend_item.* from backend_item, backend_menu, backend_menu_items WHERE
-	                url_name = '{url_name}' AND 
-	                menu_id = backend_menu.id AND 
-	                backend_item.id = item_id AND
-                    backend_item.available = 1 AND
-	                (	
-		                ( start_time IS NULL OR start_time <= '{time}' ) AND 
-		                ( end_time IS NULL OR end_time >= '{time}' )
-	                ) AND
-	                (	
-		                ( start_day IS NULL OR start_day <= {dayofweek} ) AND 
-		                ( end_day IS NULL OR end_day >= {dayofweek} )
-	                )
+                SELECT item.* from backend_item item, backend_menu menu, backend_menu_items menuitems, backend_menuurlname url WHERE
+                    url_name = '{url_name}' AND 
+                    url.menu_id = menu.id AND
+                    menu.id = menuitems.menu_id AND 
+                    item.id = item_id AND
+                    item.available = 1 AND
+                    (	
+                        ( start_time IS NULL OR start_time <= '{time}' ) AND 
+                        ( end_time IS NULL OR end_time >= '{time}' )
+                    ) AND
+                    (	
+                        ( start_day IS NULL OR start_day <= '{dayofweek}' ) AND 
+                        ( end_day IS NULL OR end_day >= '{dayofweek}' )
+                    )
                 """)
             else:
+                with connection.cursor() as cursor:
+                    cursor.execute(f"""
+                        SELECT name, url_name, description, image FROM backend_menu menu, backend_menuurlname url WHERE 
+                            menu.id = url.menu_id AND 
+                            menu.super_menu_id IS NULL AND
+                            available = 1 AND
+	                        (	
+		                        ( start_time IS NULL OR start_time <= '{time}' ) AND 
+		                        ( end_time IS NULL OR end_time >= '{time}' )
+	                        ) AND
+	                        (	
+		                        ( start_day IS NULL OR start_day <= '{dayofweek}' ) AND 
+		                        ( end_day IS NULL OR end_day >= '{dayofweek}' )
+	                        )
+                    """)
+                    rows = cursor.fetchall()
+
+                menus = [
+                        {
+                            'name' : name,
+                            'url_name' : url_name,
+                            'description' : description,
+                            'image' : image,
+                        }
+                        for name, url_name, description, image in rows
+                    ]
+
                 items = models.Item.objects.none()
                 
             return menus, items
@@ -223,10 +272,9 @@ class ItemMenuListView(APIView):
             
         """
         menus, items = self.get_objects(url_name)
-        menu_serializer = serializers.MenuSerializer(menus, many=True, context={'request': request})
         item_serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
         data = {
-            'menus': menu_serializer.data,
+            'menus': menus,
             'items': item_serializer.data,
             }
            

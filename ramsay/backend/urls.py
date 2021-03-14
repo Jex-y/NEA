@@ -3,8 +3,8 @@ from rest_framework import routers
 from .views import *
 
 urlpatterns = [
-        path('menus/', ItemMenuListView.as_view()),
-        path('menus/<str:url_name>', ItemMenuListView.as_view()),
+        path('menus/', ItemMenuListView.as_view(), name='toplevel'),
+        path('menus/<str:url_name>', ItemMenuListView.as_view(), name='menu'),
         path('items/search=<str:query>', ItemSearchView.as_view(), name='search'),
         path('items/filter/tags=<str:tags>', ItemFilterView.as_view(), name='filter'),
         path('items/<str:item_id>', ItemDetailView.as_view(), name='itemdetail'),
