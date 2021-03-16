@@ -6,6 +6,11 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ('id', 'name', 'icon')
 
+class MenuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Menu
+        fields = ('name', 'url_name', 'description', 'image')
+
 class ItemSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
 

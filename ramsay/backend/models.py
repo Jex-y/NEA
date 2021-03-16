@@ -196,6 +196,7 @@ class Menu(models.Model):
     items = models.ManyToManyField(Item, blank=True)
     super_menu = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     available = models.BooleanField(default=True)
+    url_name = models.SlugField(max_length=64, editable=False)
     image = models.ImageField(
         upload_to=get_upload_name_menu,
         blank=True, null=True)
@@ -255,10 +256,6 @@ class Menu(models.Model):
 
         """
         return self.name
-
-class MenuUrlName(models.Model):
-    menu = models.ForeignKey(Menu, models.CASCADE)
-    url_name = models.SlugField(max_length=64, editable=False)
 
 class Table(models.Model):
     """
