@@ -173,21 +173,6 @@ class ItemMenuListView(APIView):
             
 
             if url_name:
-                q = f"""
-                    SELECT child.* FROM backend_menu child, backend_menu parent WHERE
-                        parent.url_name = '{url_name}' AND
-                        child.super_menu_id = parent.id AND
-                        child.available = 1 AND
-	                    (	
-		                    ( child.start_time IS NULL OR child.start_time <= '{time}' ) AND 
-		                    ( child.end_time IS NULL OR child.end_time >= '{time}' )
-	                    ) AND
-	                    (	
-		                    ( child.start_day IS NULL OR child.start_day <= {dayofweek} ) AND 
-		                    ( child.end_day IS NULL OR child.end_day >= {dayofweek} )
-	                    )
-                """
-                print(q)
                 menus = models.Menu.objects.raw(f"""
                     SELECT child.* FROM backend_menu child, backend_menu parent WHERE
                         parent.url_name = '{url_name}' AND
