@@ -32,11 +32,7 @@ class ItemMenuListViewTest(APITestCase):
         self.menuNeverAvailable = Menu.objects.create(name="Test Menu 2", available=False)
 
     def test_top_level_available(self):
-        return
-        expected_menus = [
-            {
-            }
-            ]
+        expected_menus = MenuSerializer([self.menuAlwaysAvailable], many=True).data
         expected_items = ItemSerializer([], many=True).data
 
         #ItemMenuListView.test_time = datetime.datetime.fromisoformat("2020-01-01T16:00:00")
