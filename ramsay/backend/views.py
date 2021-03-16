@@ -170,38 +170,60 @@ class ItemMenuListView(APIView):
             now = timezone.now()
             time = str(now.time())
             dayofweek = str(now.weekday())
-            super_menu = "IS NULL" if url_name is None else f"= '{url_name}'"
-            menus = models.Menu.objects.raw(f"""
-                SELECT * from backend_menu WHERE
-                    available = 1 AND
-	                super_menu_id {super_menu} AND
-	                (	
-		                ( start_time IS NULL OR start_time <= '{time}' ) AND 
-		                ( end_time IS NULL OR end_time >= '{time}' )
-	                ) AND
-	                (	
-		                ( start_day IS NULL OR start_day <= {dayofweek} ) AND 
-		                ( end_day IS NULL OR end_day >= {dayofweek} )
-	                )
-                """)
+            
 
             if url_name:
+                q = f"""
+                    SELECT child.* FROM backend_menu child, backend_menu parent WHERE
+                        parent.url_name = '{url_name}' AND
+                        child.super_menu_id = parent.id AND
+                        child.available = 1 AND
+	                    (	
+		                    ( child.start_time IS NULL OR child.start_time <= '{time}' ) AND 
+		                    ( child.end_time IS NULL OR child.end_time >= '{time}' )
+	                    ) AND
+	                    (	
+		                    ( child.start_day IS NULL OR child.start_day <= {dayofweek} ) AND 
+		                    ( child.end_day IS NULL OR child.end_day >= {dayofweek} )
+	                    )
+                """
+                print(q)
+                menus = models.Menu.objects.raw(f"""
+                    SELECT child.* FROM backend_menu child, backend_menu parent WHERE
+                        parent.url_name = '{url_name}' AND
+                        child.super_menu_id = parent.id AND
+                        child.available = 1 AND
+	                    (	
+		                    ( child.start_time IS NULL OR child.start_time <= '{time}' ) AND 
+		                    ( child.end_time IS NULL OR child.end_time >= '{time}' )
+	                    ) AND
+	                    (	
+		                    ( child.start_day IS NULL OR child.start_day <= {dayofweek} ) AND 
+		                    ( child.end_day IS NULL OR child.end_day >= {dayofweek} )
+	                    )
+                """)
                 items = models.Item.objects.raw(f"""
-                SELECT backend_item.* from backend_item, backend_menu, backend_menu_items WHERE
-	                url_name = '{url_name}' AND 
-	                menu_id = backend_menu.id AND 
-	                backend_item.id = item_id AND
-                    backend_item.available = 1 AND
-	                (	
-		                ( start_time IS NULL OR start_time <= '{time}' ) AND 
-		                ( end_time IS NULL OR end_time >= '{time}' )
-	                ) AND
-	                (	
-		                ( start_day IS NULL OR start_day <= {dayofweek} ) AND 
-		                ( end_day IS NULL OR end_day >= {dayofweek} )
-	                )
+                    SELECT item.* FROM backend_item item, backend_menu menu, backend_menu_items WHERE
+	                    url_name = '{url_name}' AND 
+	                    menu_id = menu.id AND 
+	                    item.id = item_id AND
+                        item.available = 1
                 """)
             else:
+                menus = models.Menu.objects.raw(f"""
+                    SELECT * FROM backend_menu WHERE
+                        super_menu_id IS NULL AND
+                        available = 1 AND
+	                    (	
+		                    ( start_time IS NULL OR start_time <= '{time}' ) AND 
+		                    ( end_time IS NULL OR end_time >= '{time}' )
+	                    ) AND
+	                    (	
+		                    ( start_day IS NULL OR start_day <= {dayofweek} ) AND 
+		                    ( end_day IS NULL OR end_day >= {dayofweek} )
+	                    )
+                """)
+
                 items = models.Item.objects.none()
                 
             return menus, items
