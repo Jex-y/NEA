@@ -17,21 +17,20 @@
                      Command="{Binding SearchCommand}"/>
     </ContentPage.ToolbarItems>
     <ScrollView>
-        <StackLayout>
+        <StackLayout Margin="8,8,8,8">
             <CollectionView
                 ItemsSource="{Binding MenuData.SubMenus}"
                 IsVisible="{Binding HasMenus}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Grid Margin="0,4,0,4">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="32" />
-                                <RowDefinition Height="128" />
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="96" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
 
                             <Grid.GestureRecognizers>
@@ -43,24 +42,22 @@
                                    HorizontalOptions="FillAndExpand"
                                    VerticalOptions="FillAndExpand" 
                                    Aspect="AspectFill"
-                                   Opacity="0.64"
                                    Grid.RowSpan="2"
-                                   Grid.ColumnSpan="3"
+                                   Grid.ColumnSpan="1"
                                    InputTransparent="True"/>
 
                             <Label Text="{Binding Name}"
-                                   FontAttributes="Bold"
                                    FontSize="Large"
                                    TextColor="Black"
                                    Grid.Row="0"
-                                   Grid.ColumnSpan="3"
+                                   Grid.Column="1"
                                    InputTransparent="True"/>
 
                             <Label Text="{Binding Description}"
                                    FontSize="Body" 
                                    TextColor="Black"
                                    Grid.Row="1"
-                                   Grid.ColumnSpan="3"
+                                   Grid.Column="1"
                                    InputTransparent="True"/>
 
                         </Grid>
@@ -68,20 +65,20 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <CollectionView ItemsSource="{Binding MenuData.Items}">
+            <CollectionView ItemsSource="{Binding MenuData.Items}"
+                            IsVisible="{Binding HasItems}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="4,16,4,16"
-                              HeightRequest="64">
+                        <Grid Margin="0,4,0,4">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="80" />
+                                <RowDefinition Height="24" />
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="0.5*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
 
                             <Grid.GestureRecognizers>
@@ -94,39 +91,48 @@
                                    Aspect="AspectFill"
                                    Opacity="0.80"
                                    Grid.RowSpan="2"
-                                   Grid.Column="2"
-                                   InputTransparent="True"/>
-
-                            <Label Text="{Binding Name}"
-                                   FontAttributes="Bold"
-                                   FontSize="Large"
-                                   TextColor="Black"
-                                   Grid.Row="0"
                                    Grid.Column="0"
                                    InputTransparent="True"/>
 
+                            <Label Text="{Binding Name}"
+                                   FontSize="Large"
+                                   TextColor="Black"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   InputTransparent="True"/>
+
+                            <Label Text="{Binding Description}"
+                                   FontSize="Body" 
+                                   TextColor="Black"
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+                                   InputTransparent="True"/>
+
                             <CollectionView ItemsSource="{Binding Tags}"
-                                            Grid.Column="1"
-                                            Margin="4,4,4,4">
+                                            Grid.Row="2"
+                                            Grid.Column="1">
                                 <CollectionView.ItemsLayout>
-                                    <GridItemsLayout Orientation="Vertical"
-                                                     Span="2"/>
+                                    <GridItemsLayout Orientation="Horizontal"/>
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Image Source="{Binding IconURI}"
                                                BackgroundColor="Transparent"
-                                               HeightRequest="32"/>
+                                               HeightRequest="32"
+                                               Margin="2,0,2,0"/>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
 
                             <Label Text="{Binding Price, StringFormat='{0:C}'}"
+                                   Margin="0,0,8,0"
                                    FontSize="Body" 
                                    FontAttributes="Bold"
                                    TextColor="Black"
-                                   Grid.Row="1"
-                                   Grid.Column="0"
+                                   Grid.Row="2"
+                                   Grid.Column="1"
+                                   VerticalTextAlignment="End"
+                                   HorizontalTextAlignment="End"
                                    InputTransparent="True"/>
                         </Grid>
                     </DataTemplate>

@@ -44,7 +44,7 @@
             
         </Tab>
         <Tab Title="Orders"
-             Icon="xamarin_logo.png">
+             Icon="orders.png">
             <ShellContent x:Name="PastOrderTab">
                 <views:PastOrderPage/>
             </ShellContent>

@@ -17,6 +17,7 @@ namespace hollywood.ViewModels
         readonly MenuHandle MenuHandle; 
         Menu _menuData;
         bool _hasMenus = false;
+        bool _hasItems = false;
         DateTime MenusAge = DateTime.MinValue;
         bool _isRefreshing = false;
 
@@ -70,6 +71,12 @@ namespace hollywood.ViewModels
             private set { SetProperty(ref _hasMenus, value); }
         }
 
+        public bool HasItems
+        {
+            get { return _hasItems; }
+            private set { SetProperty(ref _hasItems, value); }
+        }
+
         public bool IsRefreshing
         {
             get { return _isRefreshing; }
@@ -113,6 +120,7 @@ namespace hollywood.ViewModels
                 }
             }
             HasMenus = MenuData.SubMenus.Count > 0;
+            HasItems = MenuData.Items.Count > 0;
             IsRefreshing = false;
         }
 
