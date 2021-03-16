@@ -31,7 +31,7 @@
 
     <TabBar x:Name="tab">
         <Tab Title="Menu"
-             Icon="tab_about.png">
+             Icon="menu.png">
             <ShellContent x:Name="MenuPageTab">
                 <views:MenuPage/>
             </ShellContent>

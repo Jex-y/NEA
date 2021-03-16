@@ -10,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace hollywood.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class FilterPage : Rg.Plugins.Popup.Pages.PopupPage
+    public partial class FilterPopupPage : Rg.Plugins.Popup.Pages.PopupPage
     {
-        public FilterPage()
+        public FilterPopupPage()
         {
             InitializeComponent();
         }

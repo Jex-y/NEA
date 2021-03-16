@@ -11,7 +11,6 @@ from rest_framework import status
 from . import models
 from . import serializers
 
-
 class ItemSearchView(APIView):
     """
     API method to search item menus and descriptions
@@ -148,6 +147,10 @@ class ItemMenuListView(APIView):
         Serves the API method
 
     """
+
+    # This is a static variable used to test the view at different times
+    test_time = None
+
     def get_objects(self, url_name):
         """
         Queries the database and returns items and menus that are contained by the given menu. 
@@ -156,7 +159,7 @@ class ItemMenuListView(APIView):
         The use case for this would be if there are certain items in a menu that needed to be scheduled or removed together.
 
         Parameters:
-            url_name (str): The URL name of the menu to get the items of. 
+            url_name (str): The URL name of the menu to get the items of.
 
         Returns:
             (QuerySet): items in the given menu
@@ -167,11 +170,13 @@ class ItemMenuListView(APIView):
         """
         try:
             # Could be vulnerable to SQL injection from url_name
-            now = timezone.now()
+            if isinstance(ItemMenuListView.test_time, datetime.datetime):
+                now = ItemMenuListView.test_time
+            else:
+                now = timezone.now()
+            
             time = str(now.time())
             dayofweek = str(now.weekday())
-            
-
             if url_name:
                 menus = models.Menu.objects.raw(f"""
                     SELECT child.* FROM backend_menu child, backend_menu parent WHERE
@@ -230,10 +235,9 @@ class ItemMenuListView(APIView):
             
         """
         menus, items = self.get_objects(url_name)
-        menu_serializer = serializers.MenuSerializer(menus, many=True, context={'request': request})
         item_serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
         data = {
-            'menus': menu_serializer.data,
+            'menus': menus,
             'items': item_serializer.data,
             }
            
