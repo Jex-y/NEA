@@ -16,11 +16,11 @@ namespace hollywood.ViewModels
     {
         ObservableCollection<Item> _searchResults;
         readonly ICommand _searchCommand;
-        readonly IRestService ApiConnection;
+        readonly IRestService restService;
 
         public SearchPageViewModel() 
         {
-            ApiConnection = DependencyService.Get<IRestService>();
+            restService = DependencyService.Get<IRestService>();
             _searchCommand = new Command<string>(async (text) => await OnSearchTextChange(text));
         }
 
@@ -39,7 +39,7 @@ namespace hollywood.ViewModels
         {
             try
             {
-                SearchResults = await ApiConnection.GetSearchResults(searchTerm);
+                SearchResults = await restService.GetSearchResults(searchTerm);
             }
             catch (Exception ex)
             {

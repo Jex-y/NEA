@@ -5,8 +5,6 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify  
 
-from . import managers
-
 def get_upload_name(dir, instance, filename):
         """
         Passed to UploadField to get a path to store the file.
@@ -25,13 +23,13 @@ def get_upload_name(dir, instance, filename):
         return 'images/{}/{}.{}'.format(dir,instance.pk,filename.split('.')[-1])
 
 def get_upload_name_tag(instance, filename):
-    return get_upload_name('tags',instancem,filename)
+    return get_upload_name('tags',instance,filename)
 
 def get_upload_name_item(instance, filename):
-    return get_upload_name('items',instancem,filename)
+    return get_upload_name('items',instance,filename)
 
 def get_upload_name_menu(instance, filename):
-    return get_upload_name('menus',instancem,filename)
+    return get_upload_name('menus',instance,filename)
 
 class Tag(models.Model):
     """
@@ -136,6 +134,7 @@ class Item(models.Model):
         """
         return self.name
 
+
 class Menu(models.Model):
     """
     A model to represent a menu.
@@ -153,7 +152,7 @@ class Menu(models.Model):
         human readable description
     items : ManyToManyField(Item)
         the items assosiated with the menu
-    super_menu : ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True)
+    super_menu : ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
         foreign key to the menu that contains this menu
         used to create recurance relation needed for sub-menus
     available : BooleanField(default=True)
@@ -186,9 +185,6 @@ class Menu(models.Model):
     save():
         Saves changes to the instance to the database.
 
-    check_available(time=timezone.now()):
-        Returns True if the menu should be available at the given time.
-
     __str__():
         Returns name.
 
@@ -197,15 +193,12 @@ class Menu(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=256, blank=True, null=True)
-    items = models.ManyToManyField(Item)
-    super_menu = models.ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True)
+    items = models.ManyToManyField(Item, blank=True)
+    super_menu = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     available = models.BooleanField(default=True)
-    url_name = models.SlugField(max_length=64, editable=False)
     image = models.ImageField(
         upload_to=get_upload_name_menu,
         blank=True, null=True)
-
-    objects = managers.MenuManager()
 
     day_choices = [
             (0, 'Monday'),
@@ -234,7 +227,13 @@ class Menu(models.Model):
             None
 
         """
-        self.url_name = slugify(self.name)
+        try:
+            url_name_model = MenuUrlName.objects.get(menu = self)
+        except MenuUrlName.DoesNotExist:
+            url_name_model = MenuUrlName(menu = self)
+        
+        url_name_model.url_name = slugify(self.name)
+        url_name_model.save()
 
         if isinstance(self.start_time, datetime.datetime):
             self.start_time = self.start_time.time()
@@ -243,56 +242,6 @@ class Menu(models.Model):
             self.end_time = self.end_time.time()
 
         super(Menu, self).save(*args, **kwargs)
-
-    def check_available(self, time=timezone.now()):
-        """
-        Returns True if the menu should be available at the given datetime.
-
-        Parameters
-            time (datetime): the time to check at, defaults to current time
-
-        Returns
-            result (bool): whether the menu should be available
-        
-        """
-        if self.start_day is not None and self.end_day is not None: # Is weekly menu
-            if self.start_time is not None and self.end_time is not None: # Has time constraint
-                result = self.available and self.__time_check_available(time) and self.__week_check_available(time)
-            else:
-                result = self.available and self.__week_check_available(time) # Has no time contstraint
-
-        elif self.start_time is not None and self.end_time is not None: # Is daily menu
-            result = self.available and self.__time_check_available(time)
-
-        else: # Is normal menu
-            result = self.available
-        return result
-
-    def __time_check_available(self, time):
-        """
-        checks if the menu should be available at the given time of day
-
-        Paremeters:
-            time (datetime): the datetime to check at
-
-        Returns:
-            (bool): whether the menu should be available at the time of day
-
-        """
-        return self.start_time <= time.time() <= self.end_time
-
-    def __week_check_available(self, time):
-        """
-        checks if the menu should be available at the given day of the week
-
-        Paremeters:
-            time (datetime): the datetime to check at
-
-        Returns:
-            (bool): whether the menu should be available on the day of the week
-
-        """
-        return self.start_day <= time.weekday() <= self.end_day
 
     def __str__(self):
         """
@@ -306,6 +255,10 @@ class Menu(models.Model):
 
         """
         return self.name
+
+class MenuUrlName(models.Model):
+    menu = models.ForeignKey(Menu, models.CASCADE)
+    url_name = models.SlugField(max_length=64, editable=False)
 
 class Table(models.Model):
     """
@@ -378,7 +331,7 @@ class Order(models.Model):
 
     Attributes
     --------
-    session : ForeignKey(Session, on_delete=models.PROTECT)
+    session : ForeignKey(Session, on_delete=models.CASCADE)
         foreign key to the session that the order is assosiated with
     items : ManyToManyField(
         Item,
@@ -395,7 +348,7 @@ class Order(models.Model):
     None
 
     """
-    session = models.ForeignKey(Session, on_delete=models.PROTECT)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
     items = models.ManyToManyField(
         Item,
         through='ItemOrder',
@@ -413,9 +366,9 @@ class ItemOrder(models.Model):
 
     Attributes
     --------
-    order : ForeignKey(Order, on_delete=models.PROTECT)
+    order : ForeignKey(Order, on_delete=models.CASCADE)
         foreign key to the order than the ItemOrder is a part of
-    item : ForeignKey(Item, on_delete=models.PROTECT)
+    item : ForeignKey(Item, on_delete=models.CASCADE)
         foreign key to the item that the ItemOrder references
     quantity : IntegerField()
         the quantity of the item being ordered
@@ -432,7 +385,7 @@ class ItemOrder(models.Model):
     """
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.PROTECT)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     completed = models.BooleanField(default=False)
     notes = models.CharField(max_length=256, blank=True, null=True)

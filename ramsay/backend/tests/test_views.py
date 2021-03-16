@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework import status
 from backend.models import *
 from backend.serializers import *
+from backend.views import *
 import json
 import datetime
 import time
@@ -23,6 +24,35 @@ def orderJson(data):
         return sorted(orderJson(x) for x in data)
     else:
         return data
+
+class ItemMenuListViewTest(APITestCase):
+
+    def setUp(self):
+        self.menuAlwaysAvailable = Menu.objects.create(name="Test Menu 1")
+        self.menuNeverAvailable = Menu.objects.create(name="Test Menu 2", available=False)
+
+    def test_top_level_available(self):
+        return
+        expected_menus = [
+            {
+            }
+            ]
+        expected_items = ItemSerializer([], many=True).data
+
+        #ItemMenuListView.test_time = datetime.datetime.fromisoformat("2020-01-01T16:00:00")
+        response = self.client.get(reverse('backend:toplevel'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_data = json.loads(response.content)
+        menus = json_data["menus"]
+        items = json_data["items"]
+
+        self.assertEqual(menus, expected_menus)
+        self.assertEqual(items, expected_items)
+
+    def other_test(self):
+        pass
+
+
 
 class ItemSearchViewTest(APITestCase):
 

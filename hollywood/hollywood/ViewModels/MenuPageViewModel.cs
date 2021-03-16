@@ -1,5 +1,7 @@
 ﻿using hollywood.Models;
 using hollywood.Services;
+using hollywood.Views;
+using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -20,6 +22,7 @@ namespace hollywood.ViewModels
 
         readonly ICommand _refreshCommand;
         readonly ICommand _searchCommand;
+        readonly ICommand _filterCommand;
         readonly IRestService restService;
         readonly IContextService contextService;
 
@@ -42,6 +45,7 @@ namespace hollywood.ViewModels
             contextService.Context.Basket.OrderUpdated += Basket_OrderUpdated;
             _refreshCommand = new Command(async() => await OnRefresh());
             _searchCommand = new Command(async() => await OnSearch());
+            _filterCommand = new Command(async () => await OnFilter());
         }
 
         void Basket_OrderUpdated(object sender, EventArgs e)
@@ -82,6 +86,10 @@ namespace hollywood.ViewModels
             get { return _searchCommand; }
         }
 
+        public ICommand FilterCommand
+        {
+            get { return _filterCommand; }
+        }
         public string Total 
         {
             get { return string.Format("Total: {0:C2}", contextService.Context.Basket.Total); }
@@ -111,6 +119,11 @@ namespace hollywood.ViewModels
         async Task OnSearch()
         {
             await App.Current.MainPage.Navigation.PushAsync(new SearchPage());
+        }
+
+        async Task OnFilter()
+        {
+            await App.Current.MainPage.Navigation.PushPopupAsync(new FilterPopupPage());
         }
     }
 }
