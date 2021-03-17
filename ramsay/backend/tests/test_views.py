@@ -28,14 +28,21 @@ def orderJson(data):
 class ItemMenuListViewTest(APITestCase):
 
     def setUp(self):
+        # Note that order is not given so should use functions above
         self.menuAlwaysAvailable = Menu.objects.create(name="Test Menu 1")
         self.menuNeverAvailable = Menu.objects.create(name="Test Menu 2", available=False)
+        self.menuAvailableOnSaturday = Menu.objects.create(name="Test Menu 3", start_day = 5, end_day = 5) # Saturday
+
+        start_time = datetime.datetime.fromisoformat("2020-01-01T17:00:00")
+        end_time = datetime.datetime.fromisoformat("2020-01-01T23:00:00")
+        self.menuAvailableAfterFive = Menu.objects.create(name="Test Menu 4", start_time = start_time, end_time = end_time)
 
     def test_top_level_available(self):
         expected_menus = MenuSerializer([self.menuAlwaysAvailable], many=True).data
         expected_items = ItemSerializer([], many=True).data
 
-        #ItemMenuListView.test_time = datetime.datetime.fromisoformat("2020-01-01T16:00:00")
+        ItemMenuListView.test_time = datetime.datetime.fromisoformat("2020-01-01T16:00:00") # Wednesday at 4 pm
+
         response = self.client.get(reverse('backend:toplevel'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json_data = json.loads(response.content)
@@ -45,8 +52,61 @@ class ItemMenuListViewTest(APITestCase):
         self.assertEqual(menus, expected_menus)
         self.assertEqual(items, expected_items)
 
-    def other_test(self):
-        pass
+    def test_top_level_day(self):
+        expected_menus = MenuSerializer([
+            self.menuAlwaysAvailable,
+            self.menuAvailableOnSaturday,
+            ], many=True).data
+        expected_items = ItemSerializer([], many=True).data
+
+        ItemMenuListView.test_time = datetime.datetime.fromisoformat("2020-01-04T16:00:00") # Saturday at 4 pm
+
+        response = self.client.get(reverse('backend:toplevel'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_data = json.loads(response.content)
+        menus = json_data["menus"]
+        items = json_data["items"]
+
+        self.assertEqual(menus, expected_menus)
+        self.assertEqual(items, expected_items)
+
+    def test_top_level_time(self):
+        # Note that it does't deal with changing days well
+        expected_menus = MenuSerializer([
+            self.menuAlwaysAvailable,
+            self.menuAvailableAfterFive,
+            ], many=True).data
+        expected_items = ItemSerializer([], many=True).data
+
+        ItemMenuListView.test_time = datetime.datetime.fromisoformat("2020-01-01T17:30:00") # Wednesday at 5:30 pm
+
+        response = self.client.get(reverse('backend:toplevel'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_data = json.loads(response.content)
+        menus = json_data["menus"]
+        items = json_data["items"]
+
+        self.assertEqual(menus, expected_menus)
+        self.assertEqual(items, expected_items)
+
+    def test_top_level_day_time(self):
+        expected_menus = MenuSerializer([
+            self.menuAlwaysAvailable,
+            self.menuAvailableOnSaturday,
+            self.menuAvailableAfterFive,
+            ], many=True).data
+        expected_items = ItemSerializer([], many=True).data
+
+        ItemMenuListView.test_time = datetime.datetime.fromisoformat("2020-01-04T17:30:00") # Wednesday at 5:30 pm
+        response = self.client.get(reverse('backend:toplevel'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_data = json.loads(response.content)
+        menus = json_data["menus"]
+        items = json_data["items"]
+
+        self.assertEqual(menus, expected_menus)
+        self.assertEqual(items, expected_items)
+
 
 
 
