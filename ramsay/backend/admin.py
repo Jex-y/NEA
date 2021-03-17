@@ -14,9 +14,16 @@ Meets requirements: 2.07
 class ItemAdmin(admin.ModelAdmin):
    pass
 
+class ItemInline(admin.TabularInline):
+    model = Menu.items.through
+
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
-    pass
+    inlines = [
+        ItemInline
+        ]
+
+    exclude = ('items',)
 
 @admin.register(Tag)
 class TagsAdmin(admin.ModelAdmin):

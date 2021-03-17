@@ -228,13 +228,7 @@ class Menu(models.Model):
             None
 
         """
-        try:
-            url_name_model = MenuUrlName.objects.get(menu = self)
-        except MenuUrlName.DoesNotExist:
-            url_name_model = MenuUrlName(menu = self)
-        
-        url_name_model.url_name = slugify(self.name)
-        url_name_model.save()
+        self.url_name = slugify(self.name)
 
         if isinstance(self.start_time, datetime.datetime):
             self.start_time = self.start_time.time()

@@ -235,9 +235,10 @@ class ItemMenuListView(APIView):
             
         """
         menus, items = self.get_objects(url_name)
-        item_serializer = serializers.ItemSerializer(items, many=True, context={'request': request})
+        menu_serializer = serializers.MenuSerializer(menus, many=True, context={"request": request})
+        item_serializer = serializers.ItemSerializer(items, many=True, context={"request": request})
         data = {
-            'menus': menus,
+            'menus': menu_serializer.data,
             'items': item_serializer.data,
             }
            
