@@ -25,21 +25,22 @@
         HorizontalOptions="FillAndExpand" 
        >
         <controls:CornerRadiusFrame CornerRadius="20,20,0,0"  
-                                    HorizontalOptions="FillAndExpand" 
-                                    HeightRequest="200" >
+                                    HorizontalOptions="FillAndExpand" >
             
-            <StackLayout Margin="20,20,20,20"
-                         HeightRequest="180">
+            <StackLayout Margin="4,4,4,4">
 
                 <Label Text="{Binding Item.Name}"
                        FontAttributes="Bold"
+                       FontSize="Large"
                        TextColor="Black"/>
 
                 <Label Text="{Binding Item.Description}"
                        TextColor="Black"/>
 
-                <Grid HeightRequest="128"
-                      Margin="64,4,64,4">
+                <Grid Margin="64,4,64,4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -47,6 +48,7 @@
                     </Grid.ColumnDefinitions>
 
                     <ImageButton Source="minus.png"
+                                 Grid.Row="0"
                                  Grid.Column="0"
                                  BackgroundColor="#00000000"
                                  Command="{Binding RemoveCommand}"
@@ -54,13 +56,15 @@
 
                     <Label Text="{Binding NumItems}"
                            TextColor="Black"
+                           Grid.Row="0"
                            Grid.Column="1"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           FontSize="Title"
+                           FontSize="Large"
                            FontAttributes="Bold"/>
 
                     <ImageButton Source="add.png"
+                                 Grid.Row="0"
                                  Grid.Column="2"
                                  BackgroundColor="#00000000"
                                  Command="{Binding AddCommand}"/>
