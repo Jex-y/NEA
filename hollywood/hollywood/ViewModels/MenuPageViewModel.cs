@@ -1,5 +1,7 @@
 ﻿using hollywood.Models;
 using hollywood.Services;
+using hollywood.Views;
+using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -15,11 +17,13 @@ namespace hollywood.ViewModels
         readonly MenuHandle MenuHandle; 
         Menu _menuData;
         bool _hasMenus = false;
+        bool _hasItems = false;
         DateTime MenusAge = DateTime.MinValue;
         bool _isRefreshing = false;
 
         readonly ICommand _refreshCommand;
         readonly ICommand _searchCommand;
+        readonly ICommand _filterCommand;
         readonly IRestService restService;
         readonly IContextService contextService;
 
@@ -42,6 +46,7 @@ namespace hollywood.ViewModels
             contextService.Context.Basket.OrderUpdated += Basket_OrderUpdated;
             _refreshCommand = new Command(async() => await OnRefresh());
             _searchCommand = new Command(async() => await OnSearch());
+            _filterCommand = new Command(async () => await OnFilter());
         }
 
         void Basket_OrderUpdated(object sender, EventArgs e)
@@ -66,6 +71,12 @@ namespace hollywood.ViewModels
             private set { SetProperty(ref _hasMenus, value); }
         }
 
+        public bool HasItems
+        {
+            get { return _hasItems; }
+            private set { SetProperty(ref _hasItems, value); }
+        }
+
         public bool IsRefreshing
         {
             get { return _isRefreshing; }
@@ -82,6 +93,10 @@ namespace hollywood.ViewModels
             get { return _searchCommand; }
         }
 
+        public ICommand FilterCommand
+        {
+            get { return _filterCommand; }
+        }
         public string Total 
         {
             get { return string.Format("Total: {0:C2}", contextService.Context.Basket.Total); }
@@ -105,12 +120,18 @@ namespace hollywood.ViewModels
                 }
             }
             HasMenus = MenuData.SubMenus.Count > 0;
+            HasItems = MenuData.Items.Count > 0;
             IsRefreshing = false;
         }
 
         async Task OnSearch()
         {
             await App.Current.MainPage.Navigation.PushAsync(new SearchPage());
+        }
+
+        async Task OnFilter()
+        {
+            await App.Current.MainPage.Navigation.PushPopupAsync(new FilterPopupPage());
         }
     }
 }
