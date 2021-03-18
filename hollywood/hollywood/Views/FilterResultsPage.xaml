@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="hollywood.Views.FilterResultsPage">
+    
+    <CollectionView ItemsSource="{Binding Items}">
+        <CollectionView.EmptyView>
+            <Label Text="Your filter returned no results!"
+                   TextColor="Black"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+        </CollectionView.EmptyView>
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Grid Margin="0,4,0,4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="80" />
+                        <RowDefinition Height="24" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding TapCommand}"
+                                                        CommandParameter="{Binding}"/>
+                    </Grid.GestureRecognizers>
+
+                    <Image Source="{Binding ImageURI}"
+                                   VerticalOptions="FillAndExpand" 
+                                   Aspect="AspectFill"
+                                   Opacity="0.80"
+                                   Grid.RowSpan="2"
+                                   Grid.Column="0"
+                                   InputTransparent="True"/>
+
+                    <Label Text="{Binding Name}"
+                                   FontSize="Large"
+                                   TextColor="Black"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   InputTransparent="True"/>
+
+                    <Label Text="{Binding Description}"
+                                   FontSize="Body" 
+                                   TextColor="Black"
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+                                   InputTransparent="True"/>
+
+                    <CollectionView ItemsSource="{Binding Tags}"
+                                            Grid.Row="2"
+                                            Grid.Column="1">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding IconURI}"
+                                               BackgroundColor="Transparent"
+                                               HeightRequest="32"
+                                               Margin="2,0,2,0"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Label Text="{Binding Price, StringFormat='{0:C}'}"
+                                   Margin="0,0,8,0"
+                                   FontSize="Body" 
+                                   FontAttributes="Bold"
+                                   TextColor="Black"
+                                   Grid.Row="2"
+                                   Grid.Column="1"
+                                   VerticalTextAlignment="End"
+                                   HorizontalTextAlignment="End"
+                                   InputTransparent="True"/>
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage>

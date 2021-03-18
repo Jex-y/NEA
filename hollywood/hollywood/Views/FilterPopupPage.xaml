@@ -20,8 +20,7 @@
 
     <StackLayout 
         VerticalOptions="EndAndExpand" 
-        HorizontalOptions="FillAndExpand" 
-       >
+        HorizontalOptions="FillAndExpand" >
         <controls:CornerRadiusFrame CornerRadius="20,20,0,0"  
                                     HorizontalOptions="FillAndExpand" 
                                     HeightRequest="200" >
@@ -29,12 +28,32 @@
             <StackLayout Margin="20,20,20,20"
                          HeightRequest="180">
 
-                <CollectionView ItemsSource="{Binding Tags}">
+                <CollectionView ItemsSource="{Binding AllTags}">
                     <CollectionView.ItemsLayout>
                         <GridItemsLayout Orientation="Vertical"
-                                         Span="3"/>
+                                         Span="4"/>
                         
                     </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                            
+                                <Image Source="{Binding Icon}"
+                                       Grid.Column="0"/>
+                                <Switch IsToggled="{Binding FilterBy}"
+                                        Toggled="{Binding Source={x:Reference CurrentPage}, Path=BindingContext.ToggleCommand}"/>
+                            </Grid>
+                            
+                            
+
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
 
                 </CollectionView>
 
