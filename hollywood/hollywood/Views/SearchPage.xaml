@@ -30,25 +30,43 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
-                            
+
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding TapCommand}"
+                                                    CommandParameter="{Binding}"/>
+                            </Grid.GestureRecognizers>
+
                             <Image Source="{Binding ImageURI}"
-                                   HorizontalOptions="FillAndExpand"
-                                   VerticalOptions="FillAndExpand" 
-                                   Aspect="AspectFill"
-                                   Grid.Column="0"
-                                   Grid.RowSpan="3"/>
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand" 
+                                    Aspect="AspectFill"
+                                    Grid.Column="0"
+                                    Grid.RowSpan="3"
+                                    InputTransparent="True"/>
 
                             <Label Text="{Binding Name}"
                                    FontSize="Large"
                                    TextColor="Black"
                                    Grid.Row="0"
-                                   Grid.Column="1"/>
+                                   Grid.Column="1"
+                                   InputTransparent="True"/>
 
                             <Label Text="{Binding Description}"
                                    FontSize="Body" 
                                    TextColor="Black"
                                    Grid.Row="1"
                                    Grid.Column="1"
+                                   InputTransparent="True"/>
+
+                            <Label Text="{Binding Price, StringFormat='{0:C}'}"
+                                   Margin="0,0,8,0"
+                                   FontSize="Body" 
+                                   FontAttributes="Bold"
+                                   TextColor="Black"
+                                   Grid.Row="2"
+                                   Grid.Column="1"
+                                   VerticalTextAlignment="End"
+                                   HorizontalTextAlignment="End"
                                    InputTransparent="True"/>
 
                             <CollectionView ItemsSource="{Binding Tags}"
@@ -66,17 +84,6 @@
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
-
-                            <Label Text="{Binding Price, StringFormat='{0:C}'}"
-                                   Margin="0,0,8,0"
-                                   FontSize="Body" 
-                                   FontAttributes="Bold"
-                                   TextColor="Black"
-                                   Grid.Row="2"
-                                   Grid.Column="1"
-                                   VerticalTextAlignment="End"
-                                   HorizontalTextAlignment="End"
-                                   InputTransparent="True"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
