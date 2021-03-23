@@ -552,7 +552,7 @@ class TagListView(APIView):
             tags = models.Tag.objects.all()
             # TODO: Could fliter by if referenced by any items
             return tags
-        except:
+        except exception as e:
             raise Http404
 
     def get(self, request):

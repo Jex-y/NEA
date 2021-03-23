@@ -37,6 +37,8 @@ class ItemMenuListViewTest(APITestCase):
         end_time = datetime.datetime.fromisoformat("2020-01-01T23:00:00")
         self.menuAvailableAfterFive = Menu.objects.create(name="Test Menu 4", start_time = start_time, end_time = end_time)
 
+        self.subMenuAlwaysAvailable = Menu.objects.create(name="Test Menu 5", super_menu=self.menuAlwaysAvailable)
+
     def test_top_level_available(self):
         expected_menus = MenuSerializer([self.menuAlwaysAvailable], many=True).data
         expected_items = ItemSerializer([], many=True).data
@@ -107,6 +109,23 @@ class ItemMenuListViewTest(APITestCase):
         self.assertEqual(menus, expected_menus)
         self.assertEqual(items, expected_items)
 
+    def test_submenu_always_available(self):
+        expected_menus = MenuSerializer([
+            self.subMenuAlwaysAvailable
+            ], many=True).data
+
+        expected_items = ItemSerializer([], many=True).data
+
+        ItemMenuListView.test_time = datetime.datetime.fromisoformat("2020-01-04T16:00:00") # Saturday at 4 pm
+
+        response = self.client.get(reverse('backend:menu', args=(self.menuAlwaysAvailable.url_name,)))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json_data = json.loads(response.content)
+        menus = json_data["menus"]
+        items = json_data["items"]
+
+        self.assertEqual(menus, expected_menus)
+        self.assertEqual(items, expected_items)
 
 
 

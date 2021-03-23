@@ -15,5 +15,5 @@ urlpatterns = [
         path('orders/', ItemOrderListView.as_view(), name='itemorderlist'),
         path('orders/markcompleted', ItemOrderCompleteView.as_view(), name='itemordercomplete'),
         path('orders/session/<str:sess_id>', SessionOrderListView.as_view(), name='sessionorderlist'),
-        path('tags', TagListView.as_view(), name='tags'),
+        path('tags/', TagListView.as_view(), name='tags'),
     ]

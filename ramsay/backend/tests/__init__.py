@@ -1,3 +1,0 @@
-"""
-package for backend tests
-"""
