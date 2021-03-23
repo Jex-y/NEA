@@ -19,5 +19,7 @@ namespace hollywood.Models
         public Uri IconURI { get; set; }
 
         public bool FilterBy { get; set; }
+
+        public Tag thisTag { get { return this; } } 
     }
 }

@@ -48,9 +48,9 @@ namespace hollywood.ViewModels
             App.Current.MainPage.Navigation.PushAsync(new FilterResultsPage(items));
         }
 
-        async Task OnToggle(object sender, ToggledEventArgs e) 
+        public async Task OnToggle(object param) 
         {
-            Debug.WriteLine(sender);
+            Debug.WriteLine(param);
         }
 
         public ObservableCollection<Tag> AllTags
@@ -60,5 +60,3 @@ namespace hollywood.ViewModels
         }
     }
 }
-
-

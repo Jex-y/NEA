@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using hollywood.ViewModels;
 
 namespace hollywood.Views
 {
@@ -14,6 +15,7 @@ namespace hollywood.Views
     {
         public FilterPopupPage()
         {
+            BindingContext = new FilterPopupPageViewModel();
             InitializeComponent();
         }
     }

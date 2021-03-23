@@ -28,30 +28,31 @@
             <StackLayout Margin="20,20,20,20"
                          HeightRequest="180">
 
+                <Label Text="This is working!"
+                       TextColor="Black"/>
+
                 <CollectionView ItemsSource="{Binding AllTags}">
                     <CollectionView.ItemsLayout>
                         <GridItemsLayout Orientation="Vertical"
-                                         Span="4"/>
+                                         Span="3"/>
                         
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
+                            <Grid x:Name="filters">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                            
-                                <Image Source="{Binding Icon}"
+
+                                <Image Source="{Binding IconURI}"
+                                       BackgroundColor="Transparent"    
                                        Grid.Column="0"/>
                                 <Switch IsToggled="{Binding FilterBy}"
-                                        Toggled="{Binding Source={x:Reference CurrentPage}, Path=BindingContext.ToggleCommand}"/>
+                                        Grid.Column="1"/>
+
                             </Grid>
-                            
-                            
-
-
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 
