@@ -26,6 +26,9 @@ def orderJson(data):
         return data
 
 class ItemMenuListViewTest(APITestCase):
+    """
+    Test Cases for ItemMenuListView
+    """
 
     def setUp(self):
         # Note that order is not given so should use functions above
@@ -40,6 +43,9 @@ class ItemMenuListViewTest(APITestCase):
         self.subMenuAlwaysAvailable = Menu.objects.create(name="Test Menu 5", super_menu=self.menuAlwaysAvailable)
 
     def test_top_level_available(self):
+        """
+        Checks that top level menus are serverd correctly
+        """
         expected_menus = MenuSerializer([self.menuAlwaysAvailable], many=True).data
         expected_items = ItemSerializer([], many=True).data
 
@@ -55,6 +61,9 @@ class ItemMenuListViewTest(APITestCase):
         self.assertEqual(items, expected_items)
 
     def test_top_level_day(self):
+        """
+        Checks that top level menus that depend on the day are served correctly
+        """
         expected_menus = MenuSerializer([
             self.menuAlwaysAvailable,
             self.menuAvailableOnSaturday,
@@ -73,6 +82,9 @@ class ItemMenuListViewTest(APITestCase):
         self.assertEqual(items, expected_items)
 
     def test_top_level_time(self):
+        """
+        Checks that top level menus that depend on the time are served correctly
+        """
         # Note that it does't deal with changing days well
         expected_menus = MenuSerializer([
             self.menuAlwaysAvailable,
@@ -92,6 +104,9 @@ class ItemMenuListViewTest(APITestCase):
         self.assertEqual(items, expected_items)
 
     def test_top_level_day_time(self):
+        """
+        Checks that top level menus that depend on the day or time are served correctly and work together
+        """
         expected_menus = MenuSerializer([
             self.menuAlwaysAvailable,
             self.menuAvailableOnSaturday,
@@ -110,6 +125,9 @@ class ItemMenuListViewTest(APITestCase):
         self.assertEqual(items, expected_items)
 
     def test_submenu_always_available(self):
+        """
+        Checks that sub menus are served correctly
+        """
         expected_menus = MenuSerializer([
             self.subMenuAlwaysAvailable
             ], many=True).data
@@ -143,6 +161,9 @@ class ItemSearchViewTest(APITestCase):
             price=12.34)
 
     def test_full_name_search(self):
+        """
+        Checks that searching an items full name returns the correct results
+        """
         expected = ItemSerializer(
             [
                 self.apple,
@@ -155,6 +176,9 @@ class ItemSearchViewTest(APITestCase):
         self.assertEqual(json_data, expected)
 
     def test_partial_name_search(self):
+        """
+        Checks that seraching part of an items name returns the correct results
+        """
         expected = ItemSerializer(
             [
                 self.apple,
@@ -167,6 +191,9 @@ class ItemSearchViewTest(APITestCase):
         self.assertEqual(json_data, expected)
 
     def test_full_description_search(self):
+        """
+        Checks that searching an items full description returns the correct results
+        """
         expected = ItemSerializer(
             [
                 self.bannana,
@@ -179,6 +206,9 @@ class ItemSearchViewTest(APITestCase):
         self.assertEqual(json_data, expected)
 
     def test_partial_description_search(self):
+        """
+        Checks that seraching part of an items description returns the correct results
+        """
         expected = ItemSerializer(
             [
                 self.bannana,
@@ -191,6 +221,9 @@ class ItemSearchViewTest(APITestCase):
         self.assertEqual(json_data, expected)
 
     def test_no_results(self):
+        """
+        Checks that nothing is returned when searching for something that is not in the database
+        """
         expected = []
 
         response = self.client.get(reverse('backend:search',args=('carrot',)))
@@ -224,7 +257,10 @@ class ItemFilterViewTest(APITestCase):
             description='I need some of this right now it is like 2 AM and I am writing unit tests', 
             price=0.12)
 
-    def test_one_tag_two_results(self):
+    def test_one_tag_many_results(self):
+        """
+        Checks that filtering by one tag can return multiple results correctly
+        """
         expected = ItemSerializer(
             [
                 self.apple,
@@ -245,6 +281,9 @@ class ItemFilterViewTest(APITestCase):
             ))
 
     def test_one_tag_one_result(self):
+        """
+        Checks that filtering by one tag can return one result correctly
+        """
         expected = ItemSerializer(
             [self.apple], 
             many=True).data
@@ -261,6 +300,9 @@ class ItemFilterViewTest(APITestCase):
             expected)
 
     def test_two_tags(self):
+        """
+        Checks that filtering by many tags works correctly
+        """
         expected = ItemSerializer(
             [
                 self.apple,
@@ -282,6 +324,9 @@ class ItemFilterViewTest(APITestCase):
             ))
 
     def test_no_results(self):
+        """
+        Checks that a filter can return no results
+        """
         expected = ItemSerializer(
             [], 
             many=True).data
@@ -299,6 +344,9 @@ class ItemFilterViewTest(APITestCase):
 
 
     def test_empty_request(self):
+        """
+        Checks that the view can deal with bad input
+        """
         tags = ' '
 
         response = self.client.get(
@@ -308,6 +356,9 @@ class ItemFilterViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_invalid_request(self):
+        """
+        Checks that the view can deal with bad input
+        """
         tags = str(self.tag1.id) + '&' + str(self.tag2.id) + '&abcd1234' 
         
         response = self.client.get(
@@ -326,6 +377,9 @@ class ItemDetailViewTest(APITestCase):
             price=12.34)
 
     def test_valid(self):
+        """
+        Checks that the view works as expected in normal conditions
+        """
         expected = ItemSerializer(self.item1).data
 
         response = self.client.get(
@@ -337,6 +391,9 @@ class ItemDetailViewTest(APITestCase):
         self.assertEqual(json_data, expected)
 
     def test_invalid_id(self):
+        """
+        Checks that the view can deal with a bad item id
+        """
         response = self.client.get(
             reverse('backend:itemdetail',
             args=('abc123',)))
@@ -344,6 +401,9 @@ class ItemDetailViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_noexsistent_item(self):
+        """
+        Checks that the view can deal with a request for an item that is not in the database
+        """
         test_uuid = uuid.uuid4()
 
         while Item.objects.filter(id = test_uuid).count() > 0:
@@ -363,6 +423,9 @@ class SessionCreateViewTest(APITestCase):
         self.table2 = Table.objects.create(table_number=2)
 
     def test_valid(self):
+        """
+        Checcks that the view works as expected with valid data
+        """
         response = self.client.post(
             reverse('backend:newsess'),
             {'table_num':1},
@@ -377,6 +440,9 @@ class SessionCreateViewTest(APITestCase):
         self.assertEqual(Session.objects.get(sessId = sessId).table, self.table1)
 
     def test_invalid_arguments_empty(self):
+        """
+        Checks that the view can deal with empty arguments
+        """
         before_item_set = Session.objects.all()
 
         response = self.client.post(
@@ -391,6 +457,9 @@ class SessionCreateViewTest(APITestCase):
         self.assertQuerysetEqual(before_item_set, after_item_set)
 
     def test_invalid_arguments_format(self):
+        """
+        Checks that the view can deal with invalid arguments
+        """
         before_item_set = Session.objects.all()
 
         response = self.client.post(
@@ -407,6 +476,9 @@ class SessionCreateViewTest(APITestCase):
 
 
     def test_table_already_taken(self):
+        """
+        Checks that a session cannot be started at a table that is already taken
+        """
         response = self.client.post(
             reverse('backend:newsess'),
             {'table_num':2},
@@ -430,6 +502,9 @@ class SessionCreateViewTest(APITestCase):
         self.assertEqual(old_sess, new_sess)
 
     def test_table_does_not_exsist(self):
+        """
+        Checks that the view validates that a table exists before allocating a session id there
+        """
         before_item_set = Session.objects.all()
 
         response = self.client.post(
@@ -454,6 +529,9 @@ class SessionValidateTest(APITestCase):
             )
 
     def test_valid(self):
+        """
+        Checks that the view works as expected with a valid session id
+        """
         response = self.client.post(
             reverse('backend:validsess'),
             {'sessId':str(self.valid_sess.sessId)},
@@ -464,6 +542,9 @@ class SessionValidateTest(APITestCase):
         self.assertTrue(json_data['valid'])
 
     def test_invalid_arguments_empty(self):
+        """
+        Checks that the view can deal with empty arguemnts
+        """
         response = self.client.post(
             reverse('backend:validsess'),
             )
@@ -474,6 +555,9 @@ class SessionValidateTest(APITestCase):
 
 
     def test_invalid_arguments_format(self):
+        """
+        Checks that the view can deal with an invalid format session id
+        """
         response = self.client.post(
             reverse('backend:validsess'),
             {'sessid':'This is an apple, not a uuid!'},
@@ -484,6 +568,9 @@ class SessionValidateTest(APITestCase):
         self.assertFalse(json_data['valid'])
 
     def test_session_too_old(self):
+        """
+        Checks that the view can deal with a session that was created too long ago
+        """
         table2 = Table.objects.create(table_number=2)
 
         old_sess = Session.objects.create(
@@ -501,6 +588,9 @@ class SessionValidateTest(APITestCase):
         self.assertFalse(json_data['valid'])
 
     def test_session_in_future(self):
+        """
+        Checks that the view can deal with a session with a start time in the future
+        """
         table3 = Table.objects.create(table_number=3)
 
         future_sess = Session.objects.create(
@@ -518,6 +608,9 @@ class SessionValidateTest(APITestCase):
         self.assertFalse(json_data['valid'])
 
     def test_session_closed(self):
+        """
+        Checks that the view can deal with a closed session 
+        """
         table4 = Table.objects.create(table_number=4)
 
         closed_sess = Session.objects.create(
@@ -536,6 +629,9 @@ class SessionValidateTest(APITestCase):
         self.assertFalse(json_data['valid'])
 
     def test_no_session(self):
+        """
+        Checks that the view can deal with a session id that is not in the database
+        """
         test_uuid = uuid.uuid4()
         # Make sure uuid is definitly not in database (shouldn't happend unless not truly random)
         while Session.objects.filter(sessId = test_uuid).count() > 0:
@@ -569,6 +665,9 @@ class OrderCreateTest(APITestCase):
             price=12.34)
 
     def test_valid(self):
+        """
+        Checks that a valid order is created as expected
+        """
         json_data = {
                 'sessId':str(self.sess.sessId),
                 'order': {
@@ -615,6 +714,9 @@ class OrderCreateTest(APITestCase):
                          json_data['order']['items'][str(self.bannana.id)]['notes'])
 
     def test_empty_order(self):
+        """
+        Checks that an empty orded is dealt with correcly
+        """
         json_data = {
                 'sessId':str(self.sess.sessId),
                 'order': {
@@ -632,6 +734,9 @@ class OrderCreateTest(APITestCase):
         self.assertEqual(ItemOrder.objects.all().count(), 0)
 
     def test_invalid_json(self):
+        """
+        Checks that the view can deal with JSON data in the wrong format
+        """
         json_data = {
                 'key':'value',
                 'json_status': 'wrong',
@@ -648,6 +753,9 @@ class OrderCreateTest(APITestCase):
         self.assertEqual(ItemOrder.objects.all().count(), 0)
 
     def test_invalid_sessid(self):
+        """
+        Checks that the view can deal with an order being submitted with an invalid session id
+        """
         json_data = {
                 'sessId':'abcd1234',
                 'order': {
@@ -681,6 +789,9 @@ class TagListViewTest(APITestCase):
         self.tag2 = Tag.objects.create(name='tag2') 
 
     def test_view(self):
+        """
+        Checks that the view works as expected
+        """
         expected = TagSerializer(
             [
                 self.tag1, 
@@ -752,6 +863,9 @@ class ItemOrderListViewTest(APITestCase):
             notes='Very hot please')
 
     def test_view(self):
+        """
+        Checks that the view works as expected and presents data correctly
+        """
         response = self.client.get(reverse('backend:itemorderlist'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.maxDiff=None
