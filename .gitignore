@@ -707,3 +707,4 @@ MigrationBackup/
 /ramsay/django/Lib/site-packages/PIL/_imaging.cp37-win_amd64.pyd
 *.exe
 /ramsay/django
+/ramsay/htmlcov

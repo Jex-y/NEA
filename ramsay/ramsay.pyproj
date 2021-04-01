@@ -68,7 +68,6 @@
     <Compile Include="kitchen\apps.py" />
     <Compile Include="kitchen\migrations\__init__.py" />
     <Compile Include="kitchen\models.py" />
-    <Compile Include="kitchen\tests.py" />
     <Compile Include="kitchen\urls.py" />
     <Compile Include="kitchen\views.py" />
     <Compile Include="kitchen\__init__.py" />
