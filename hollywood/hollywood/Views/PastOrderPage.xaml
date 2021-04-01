@@ -53,7 +53,7 @@
                                 Grid.Column="2"
                                HorizontalOptions="EndAndExpand"/>
 
-                        <Label Text="{Binding Total, StringFormat='Subtotal: {0:C}'}"
+                        <Label Text="{Binding Total, StringFormat='{0:C}'}"
                                 FontSize="Medium"
                                 TextColor="Black"
                                 Grid.Row="1"
